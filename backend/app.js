@@ -1,31 +1,17 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { User } from "./models/user.model.js";
+import rootRouter from "./routes/index.route.js";
+import cors from "cors";
 
 const app = express();
 app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
-app.post("/signup", async (req, res) => {
-  console.log(req.body);
+app.use("/api/v1", rootRouter);
 
-  const { username, fullName, email, password, phoneNumber } = req.body;
-
-  try {
-    await User.create({
-      username,
-      fullName,
-      email,
-      password,
-      phoneNumber,
-    });
-
-    console.log("done");
-
-    res.json({
-      msg: "User created",
-    });
-  } catch (error) {
-    console.log(error.message);
-  }
-});
 export { app };
