@@ -6,9 +6,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Username is required"],
       unique: true,
-      minLength: [4, "Username must contain at least 4 characters"],
       trim: true,
       lowercase: true,
+      minLength: [4, "Username must contain atleast 4 characters"],
+      maxLength: [30, "Username must contain atmost 30 characters"],
     },
     fullName: {
       type: String,
@@ -38,6 +39,12 @@ const userSchema = new mongoose.Schema(
     image: {
       type: String,
       //updated by cloudinary later-->when i implementated that
+    },
+    accounts: {
+      SBI: [{ type: mongoose.Schema.Types.ObjectId, ref: "SBIBank" }],
+      HDFC: [{ type: mongoose.Schema.Types.ObjectId, ref: "HDFCBank" }],
+      AXIS: [{ type: mongoose.Schema.Types.ObjectId, ref: "AXISBank" }],
+      PNB: [{ type: mongoose.Schema.Types.ObjectId, ref: "PNBBank" }],
     },
   },
   {
