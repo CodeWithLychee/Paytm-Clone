@@ -40,12 +40,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       //updated by cloudinary later-->when i implementated that
     },
-    accounts: {
-      SBI: [{ type: mongoose.Schema.Types.ObjectId, ref: "SBIBank" }],
-      HDFC: [{ type: mongoose.Schema.Types.ObjectId, ref: "HDFCBank" }],
-      AXIS: [{ type: mongoose.Schema.Types.ObjectId, ref: "AXISBank" }],
-      PNB: [{ type: mongoose.Schema.Types.ObjectId, ref: "PNBBank" }],
-    },
+    accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
   },
   {
     timestamps: true,
