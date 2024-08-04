@@ -1,8 +1,7 @@
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
-// const validatePassword = async (candidatePassword) => {
-//   //incomplete
-//   return await bcrypt.compare(candidatePassword);
-// };
+const validatePassword = async (candidatePassword, hashedPassword) => {
+  return await bcrypt.compare(candidatePassword, hashedPassword);
+};
 
-// return { validatePassword };
+export { validatePassword };

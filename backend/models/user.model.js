@@ -38,7 +38,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       //updated by cloudinary later-->when i implementated that
     },
-    accounts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
+    accounts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+      },
+    ],
   },
   {
     timestamps: true,
