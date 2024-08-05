@@ -1,14 +1,14 @@
 import express from "express";
 import { User } from "../models/user.model.js";
 
-import { generateToken } from "../utils/generateToken.js";
-
 import { signUpValidation } from "../middlewares/signUpValidations.middleware.js";
 import { signInValidation } from "../middlewares/signInValidation.middleware.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+
+import { generateToken } from "../utils/generateToken.js";
 
 import { createHash } from "../utils/createHash.js";
 import { validatePassword } from "../utils/validatePassword.js";
-import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const route = express.Router();
 
@@ -68,6 +68,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     };
 
     return res.status(200).cookie("token", token, options).json({
@@ -76,25 +77,19 @@ route.post("/signup", signUpValidation, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      error: error.name,
       message: "Error occur while signup",
-      error: error,
     });
   }
 });
 
-route.post("/signin", signUpValidation, async (req, res) => {
+route.post("/signin", signInValidation, async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email) {
+    if (!email || !password) {
       return res.status(400).json({
-        message: "Email is required",
-      });
-    }
-
-    if (!password) {
-      return res.status(400).json({
-        message: "Password is required",
+        message: "All fields are required",
       });
     }
 
@@ -114,7 +109,7 @@ route.post("/signin", signUpValidation, async (req, res) => {
 
     if (!isPasswordCorrect) {
       return res.status(401).json({
-        message: "Password is incorrect",
+        message: "Invalid credentials",
       });
     }
 
@@ -127,6 +122,7 @@ route.post("/signin", signUpValidation, async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     };
 
     return res.status(200).cookie("token", token, options).json({
@@ -135,8 +131,8 @@ route.post("/signin", signUpValidation, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      error: error.name,
       message: "Error occur while signIn",
-      error: error,
     });
   }
 });
@@ -145,9 +141,16 @@ route.post("/logout", authMiddleware, (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
   };
   return res.status(200).clearCookie("token", options).json({
     message: "User logout Succesfully",
+  });
+});
+
+route.get("/checkLogin", authMiddleware, (req, res) => {
+  return res.status(200).json({
+    message: "User is already loggedIn",
   });
 });
 

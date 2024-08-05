@@ -13,43 +13,18 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decodeToken = verifyJwt(token);
-    console.log(decodeToken["email"]);
 
-    req.userId = decodeToken["userId"];
-    req.username = decodeToken["username"];
-    req.email = decodeToken["email"];
-    req.fullName = decodeToken["fullName"];
-    console.log(decodeToken);
+    req.body.userId = decodeToken["userId"];
+    req.body.email = decodeToken["email"];
 
     next();
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return res
-        .clearCookie("token", {
-          httpOnly: true,
-          secure: true,
-        })
-        .json({
-          error: error.name,
-          message: error.message,
-        });
-    }
-    if (error.name === "JsonWebTokenError") {
-      return res
-        .clearCookie("token", {
-          httpOnly: true,
-          secure: true,
-        })
-        .json({
-          error: error.name,
-          message: error.message,
-        });
-    }
     res
       .status(401)
       .clearCookie("token", {
         httpOnly: true,
         secure: true,
+        sameSite: none,
       })
       .json({
         error: error.name,

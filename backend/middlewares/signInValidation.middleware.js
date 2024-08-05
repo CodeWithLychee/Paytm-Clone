@@ -5,15 +5,22 @@ const zodSchema = zod.object({
   password: zod
     .string()
     .min(6, { message: "Password must contain atleast 6 characters" })
-    .max(14, { message: "Password must contain atmost 14 characters" }),
+    .max(14, { message: "Password must contain atmost 14 characters" })
+    .optional(),
 });
 
 const signInValidation = (req, res, next) => {
+  console.log("in zod");
+
+  console.log(req.body);
+
   const response = zodSchema.safeParse(req.body);
+
+  console.log("resss ", response);
 
   if (!response.success) {
     return res.status(411).json({
-      error: "Validation error",
+      error: response.error.name,
       message: response.error.errors[0].message,
     });
   }
