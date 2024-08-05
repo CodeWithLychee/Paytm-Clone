@@ -174,4 +174,29 @@ route.put("/update", authMiddleware, updateValidation, async (req, res) => {
   }
 });
 
+route.get("/bulk", authMiddleware, async (req, res) => {
+  try {
+    const filter = req.query.filter || "";
+
+    const users = await User.find({
+      fullName: {
+        $regex: filter,
+      },
+    });
+
+    res.status(200).json({
+      message: users.map((user) => ({
+        userId: user._id,
+        username: user.username,
+        fullName: user.fullName,
+      })),
+    });
+  } catch (error) {
+    return res.status(411).json({
+      error: error.name,
+      message: "Error while fetching userNames",
+    });
+  }
+});
+
 export default route;
