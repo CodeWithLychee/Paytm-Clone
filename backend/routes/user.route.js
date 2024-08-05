@@ -8,6 +8,7 @@ import { signInValidation } from "../middlewares/signInValidation.middleware.js"
 
 import { createHash } from "../utils/createHash.js";
 import { validatePassword } from "../utils/validatePassword.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const route = express.Router();
 
@@ -69,7 +70,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
       secure: true,
     };
 
-    return res.status(200).cookie("Token", token, options).json({
+    return res.status(200).cookie("token", token, options).json({
       message: "User created succesfully",
       user: createdUser,
     });
@@ -81,7 +82,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
   }
 });
 
-route.post("/signin", signInValidation, async (req, res) => {
+route.post("/signin", signUpValidation, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -128,7 +129,7 @@ route.post("/signin", signInValidation, async (req, res) => {
       secure: true,
     };
 
-    return res.status(200).cookie("Token", token, options).json({
+    return res.status(200).cookie("token", token, options).json({
       message: "User Logged in Succesfully",
       user: loggedInUser,
     });
@@ -140,5 +141,14 @@ route.post("/signin", signInValidation, async (req, res) => {
   }
 });
 
-route.post("/logout", (req, res) => {});
+route.post("/logout", authMiddleware, (req, res) => {
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res.status(200).clearCookie("token", options).json({
+    message: "User logout Succesfully",
+  });
+});
+
 export default route;
