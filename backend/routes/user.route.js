@@ -3,12 +3,10 @@ import { User } from "../models/user.model.js";
 
 import { signUpValidation } from "../middlewares/signUpValidations.middleware.js";
 import { signInValidation } from "../middlewares/signInValidation.middleware.js";
+import { updateValidation } from "../middlewares/updateValidation.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 import { generateToken } from "../utils/generateToken.js";
-
-import { createHash } from "../utils/createHash.js";
-import { validatePassword } from "../utils/validatePassword.js";
 
 const route = express.Router();
 
@@ -18,7 +16,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
 
     //checking if userName already exists
     const isUsernameExists = await User.findOne({
-      username: username,
+      username,
     });
 
     if (isUsernameExists) {
@@ -27,7 +25,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
 
     //checking if email already exists
     const isEmailExists = await User.findOne({
-      email: email,
+      email,
     });
 
     if (isEmailExists) {
@@ -36,21 +34,19 @@ route.post("/signup", signUpValidation, async (req, res) => {
 
     //checking if phoneNumber is already exists
     const isPhoneNumberExists = await User.findOne({
-      phoneNumber: phoneNumber,
+      phoneNumber,
     });
 
     if (isPhoneNumberExists) {
       return res.status(411).json({ message: "PhoneNumber already taken" });
     }
 
-    const hashedPassword = await createHash(password);
-
     const user = await User.create({
-      username: username,
-      fullName: fullName,
-      email: email,
-      password: hashedPassword,
-      phoneNumber: phoneNumber,
+      username,
+      fullName,
+      email,
+      password,
+      phoneNumber,
     });
 
     const createdUser = await User.findOne(user._id).select(
@@ -94,7 +90,7 @@ route.post("/signin", signInValidation, async (req, res) => {
     }
 
     const user = await User.findOne({
-      email: email,
+      email,
     });
 
     if (!user) {
@@ -103,13 +99,11 @@ route.post("/signin", signInValidation, async (req, res) => {
       });
     }
 
-    const hashedPassword = user.password;
-
-    const isPasswordCorrect = await validatePassword(password, hashedPassword);
+    const isPasswordCorrect = await user.isPasswordCorrect(password);
 
     if (!isPasswordCorrect) {
       return res.status(401).json({
-        message: "Invalid credentials",
+        message: "Invalid user credentials",
       });
     }
 
@@ -152,6 +146,32 @@ route.get("/checkLogin", authMiddleware, (req, res) => {
   return res.status(200).json({
     message: "User is already loggedIn",
   });
+});
+
+route.put("/update", authMiddleware, updateValidation, async (req, res) => {
+  try {
+    const { password, fullName } = req.body;
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: req.body.userId,
+      },
+      {
+        fullName,
+        password,
+      }
+    ).select("-password -phoneNumber");
+
+    return res.status(200).json({
+      message: "Updated successfully",
+      updatedUser,
+    });
+  } catch (error) {
+    return res.status(411).json({
+      error: error.name,
+      message: "Error while updating information",
+    });
+  }
 });
 
 export default route;

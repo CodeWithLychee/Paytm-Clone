@@ -3,7 +3,6 @@ import { verifyJwt } from "../utils/verifyToken.js";
 const authMiddleware = (req, res, next) => {
   const token =
     req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
-  console.log(token);
 
   if (!token) {
     return res.status(403).json({

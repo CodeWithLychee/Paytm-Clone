@@ -10,13 +10,7 @@ const zodSchema = zod.object({
 });
 
 const signInValidation = (req, res, next) => {
-  console.log("in zod");
-
-  console.log(req.body);
-
   const response = zodSchema.safeParse(req.body);
-
-  console.log("resss ", response);
 
   if (!response.success) {
     return res.status(411).json({
