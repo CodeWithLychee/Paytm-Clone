@@ -10,7 +10,7 @@ function InputBox({ heading, type, placeholder }) {
         type={type}
         placeholder={placeholder}
         required
-        className="bg-transparent text-sm text-white w-full py-2 px-2 border rounded-lg border-gray-500 md:text-base"
+        className="outline-none bg-transparent text-sm text-white w-full py-2 px-2 border rounded-lg border-gray-500 md:text-base focus:border-green-500 duration-300"
       />
     </div>
   );

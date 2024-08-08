@@ -1,9 +1,9 @@
 import React from "react";
-import Heading from "../components/Heading";
-import SubHeading from "../components/SubHeading";
-import InputBox from "../components/InputBox";
-import Button from "../components/Button";
-import ButtonWarning from "../components/ButtonWarning";
+import Heading from "../components/AuthenticationForm/Heading";
+import SubHeading from "../components/AuthenticationForm/SubHeading";
+import InputBox from "../components/AuthenticationForm/InputBox";
+import Button from "../components/AuthenticationForm/Button";
+import ButtonWarning from "../components/AuthenticationForm/ButtonWarning";
 
 function SignUp() {
   return (
@@ -30,6 +30,7 @@ function SignUp() {
         <ButtonWarning
           label={"Already have an account"}
           buttonText={"Sign in"}
+          to={"/signin"}
         />
       </form>
     </div>
