@@ -20,7 +20,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
     });
 
     if (isUsernameExists) {
-      return res.status(411).json({ message: "Username already taken" });
+      return res.status(409).json({ message: "Username already taken" });
     }
 
     //checking if email already exists
@@ -29,7 +29,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
     });
 
     if (isEmailExists) {
-      return res.status(411).json({ message: "Email already taken" });
+      return res.status(409).json({ message: "Email already taken" });
     }
 
     //checking if phoneNumber is already exists
@@ -38,14 +38,14 @@ route.post("/signup", signUpValidation, async (req, res) => {
     });
 
     if (isPhoneNumberExists) {
-      return res.status(411).json({ message: "PhoneNumber already taken" });
+      return res.status(409).json({ message: "PhoneNumber already taken" });
     }
 
     const user = await User.create({
       username,
       fullName,
       email,
-      password,
+      password, //here the hashed password will be stored before creating the user in the database
       phoneNumber,
     });
 
@@ -54,7 +54,7 @@ route.post("/signup", signUpValidation, async (req, res) => {
     );
 
     if (!createdUser) {
-      return res.status(411).json({
+      return res.status(500).json({
         message: "Something went Wrong while registering user to our database",
       });
     }
@@ -159,15 +159,24 @@ route.put("/update", authMiddleware, updateValidation, async (req, res) => {
       {
         fullName,
         password,
-      }
+      },
+      { new: true } // This ensures the updated document is returned
     ).select("-password -phoneNumber");
 
-    return res.status(200).json({
+    const updatedToken = generateToken(updatedUser);
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    };
+
+    return res.status(200).cookie("token", updatedToken, options).json({
       message: "Updated successfully",
       updatedUser,
     });
   } catch (error) {
-    return res.status(411).json({
+    return res.status(500).json({
       error: error.name,
       message: "Error while updating information",
     });
@@ -192,7 +201,7 @@ route.get("/bulk", authMiddleware, async (req, res) => {
       })),
     });
   } catch (error) {
-    return res.status(411).json({
+    return res.status(500).json({
       error: error.name,
       message: "Error while fetching userNames",
     });

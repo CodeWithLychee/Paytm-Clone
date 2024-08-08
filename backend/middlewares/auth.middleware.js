@@ -13,8 +13,8 @@ const authMiddleware = (req, res, next) => {
   try {
     const decodeToken = verifyJwt(token);
 
-    req.body.userId = decodeToken["userId"];
-    req.body.email = decodeToken["email"];
+    req.body.userId = decodeToken.userId;
+    req.body.email = decodeToken.email;
 
     next();
   } catch (error) {
@@ -23,7 +23,7 @@ const authMiddleware = (req, res, next) => {
       .clearCookie("token", {
         httpOnly: true,
         secure: true,
-        sameSite: none,
+        sameSite: "none",
       })
       .json({
         error: error.name,
