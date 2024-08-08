@@ -7,8 +7,8 @@ import ButtonWarning from "../components/AuthenticationForm/ButtonWarning";
 
 function SignIn() {
   return (
-    <div className="bg-black h-screen flex justify-center items-center">
-      <form className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 ">
+    <div className="bg-black h-screen flex justify-center items-center ">
+      <form className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-green-500/50 hover:duration-1000 ">
         <Heading label={"Sign in"} />
         <SubHeading label={"Enter your credentials to access your account"} />
         <InputBox
