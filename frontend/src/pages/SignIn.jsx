@@ -6,9 +6,6 @@ import Button from "../components/Button";
 import ButtonWarning from "../components/ButtonWarning";
 
 function SignIn() {
-  const xyz = () => {
-    console.log("pottu");
-  };
   return (
     <div className="bg-black h-screen flex justify-center items-center">
       <form
