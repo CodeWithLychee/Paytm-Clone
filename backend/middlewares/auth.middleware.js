@@ -18,6 +18,8 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
+    console.log("err");
+
     res
       .status(401)
       .clearCookie("token", {

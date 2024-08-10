@@ -31,8 +31,6 @@ const zodSchema = zod.object({
 });
 
 const signUpValidation = (req, res, next) => {
-  console.log("inside validation");
-
   const response = zodSchema.safeParse(req.body);
 
   if (!response.success) {
@@ -41,8 +39,6 @@ const signUpValidation = (req, res, next) => {
       message: response.error.errors[0].message,
     });
   }
-
-  console.log("validation done");
 
   next();
 };

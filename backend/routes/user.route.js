@@ -11,20 +11,13 @@ import { generateToken } from "../utils/generateToken.js";
 const route = express.Router();
 
 route.post("/signup", signUpValidation, async (req, res) => {
-  console.log("signup");
-
-  console.log(req.body);
   try {
-    console.log("inside try");
-
     const { username, fullName, email, password, phoneNumber } = req.body;
 
     //checking if userName already exists
     const isUsernameExists = await User.findOne({
       username,
     });
-
-    console.log("username");
 
     if (isUsernameExists) {
       return res.status(409).json({ message: "Username already taken" });
@@ -34,7 +27,6 @@ route.post("/signup", signUpValidation, async (req, res) => {
     const isEmailExists = await User.findOne({
       email,
     });
-    console.log("email");
 
     if (isEmailExists) {
       return res.status(409).json({ message: "Email already taken" });
@@ -44,7 +36,6 @@ route.post("/signup", signUpValidation, async (req, res) => {
     const isPhoneNumberExists = await User.findOne({
       phoneNumber,
     });
-    console.log("phone NUmber");
 
     if (isPhoneNumberExists) {
       return res.status(409).json({ message: "PhoneNumber already taken" });

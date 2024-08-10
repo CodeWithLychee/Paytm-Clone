@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import Heading from "../components/AuthenticationForm/Heading";
@@ -7,7 +8,10 @@ import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
 import ButtonWarning from "../components/AuthenticationForm/ButtonWarning";
 
+import { toast } from "react-toastify";
+
 function SignUp() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,7 +22,7 @@ function SignUp() {
     e.preventDefault();
     axios
       .post(
-        "http://localhost:3000/api/v1/user/signup",
+        "/v1/user/signup",
         {
           username,
           fullName,
@@ -31,10 +35,11 @@ function SignUp() {
         }
       )
       .then((response) => {
-        console.log(response);
+        toast.success(response.data.message);
+        navigate("/dashboard");
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response.data.message);
       });
   };
   return (
