@@ -1,9 +1,9 @@
 import express from "express";
 import { User } from "../models/user.model.js";
 
-import { signUpValidation } from "../middlewares/signUpValidations.middleware.js";
-import { signInValidation } from "../middlewares/signInValidation.middleware.js";
-import { updateValidation } from "../middlewares/updateValidation.middleware.js";
+import { signUpValidation } from "../middlewares/userMiddlewares/signUpValidations.middleware.js";
+import { signInValidation } from "../middlewares/userMiddlewares/signInValidation.middleware.js";
+import { updateValidation } from "../middlewares/userMiddlewares/userDetailsUpdateValidation.middleware.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 import { generateToken } from "../utils/generateToken.js";
