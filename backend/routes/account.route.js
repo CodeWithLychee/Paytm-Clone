@@ -293,40 +293,46 @@ route.get("/transactions", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.body;
 
-    const findUser = await User.findOne({ _id: userId }).select("accounts");
+    const findUser = await User.findOne({
+      _id: userId,
+    }).select("accounts");
 
     if (!findUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
-    const userAccountsSchemaIds = findUser.accounts;
-
+    const userAccountSchemaIds = findUser.accounts;
+    //now we have found the user which contains an accounts array having account schema id
     const userAccountNumbers = [];
+    for (const id of userAccountSchemaIds) {
+      const account = await Account.findOne({
+        _id: id,
+      });
 
-    for (const userAccountId of userAccountsSchemaIds) {
-      const account = await Account.findOne({ _id: userAccountId });
       if (account && account.accountNumber) {
         userAccountNumbers.push(account.accountNumber);
       }
     }
 
     let allUserTransactions = [];
-
     for (const account of userAccountNumbers) {
-      const transactions = await Transaction.find({
+      const transaction = await Transaction.find({
         $or: [
           { senderAccountNumber: account },
           { receiverAccountNumber: account },
         ],
       });
-      if (transactions.length > 0) {
-        allUserTransactions = allUserTransactions.concat(transactions);
+
+      if (transaction.length > 0) {
+        allUserTransactions = [...allUserTransactions, ...transaction];
       }
     }
 
     return res.status(200).json({
-      message: "Transaction details fetched successfully",
-      transactions: allUserTransactions,
+      message: "Transaction details fetched succesfully",
+      transaction: allUserTransactions,
     });
   } catch (error) {
     return res.status(500).json({
@@ -335,4 +341,9 @@ route.get("/transactions", authMiddleware, async (req, res) => {
   }
 });
 
+route.use((err, req, res, next) => {
+  return res.status(500).json({
+    message: "Something went Wrong || Internal Server error",
+  });
+});
 export default route;

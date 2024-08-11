@@ -208,4 +208,9 @@ route.get("/bulk", authMiddleware, async (req, res) => {
   }
 });
 
+route.use((err, req, res, next) => {
+  return res.status(500).json({
+    message: "Something went Wrong || Internal Server error",
+  });
+});
 export default route;
