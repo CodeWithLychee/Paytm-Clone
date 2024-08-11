@@ -32,7 +32,11 @@ function SignIn() {
         navigate("/dashboard");
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        if (err.message == "Request failed with status code 500") {
+          toast.error("Server is currently down");
+        } else {
+          toast.error(err.response.data.message);
+        }
       });
   };
   return (

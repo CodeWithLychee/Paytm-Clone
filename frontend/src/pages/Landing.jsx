@@ -16,7 +16,12 @@ function Landing() {
           navigate("/dashboard");
         })
         .catch((err) => {
-          toast.success(err.response.data.message);
+          console.log(err);
+          if (err.message == "Request failed with status code 500") {
+            toast.error("Server is currently down");
+          } else {
+            toast.error(err.response.data.message);
+          }
           navigate("/signin");
         });
     }, 2000);

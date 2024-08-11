@@ -5,6 +5,7 @@ const accountSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     accountNumber: {
       type: String,
@@ -12,14 +13,10 @@ const accountSchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-    bankName: {
-      type: String,
-      required: [true, "Bank Name is required"],
-      enum: ["SBI", "HDFC", "PNB", "AXIS"],
-    },
+    //later on i will add bank name
     balance: {
       type: Number,
-      default: 0,
+      default: 2000,
     },
   },
   {
