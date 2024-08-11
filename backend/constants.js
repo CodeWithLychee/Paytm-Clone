@@ -1,3 +1,5 @@
 const DB_NAME = "paytm";
 
-export { DB_NAME };
+const transactionQueue = [];
+
+export { DB_NAME, transactionQueue };

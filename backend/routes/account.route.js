@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import { Account } from "../models/account.model.js";
 import { User } from "../models/user.model.js";
+import { Transaction } from "../models/transaction.model.js";
 
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { addAccountValidation } from "../middlewares/accountMiddlewares/addAccountValidation.middleware.js";
@@ -10,6 +11,9 @@ import { deleteAccountValidation } from "../middlewares/accountMiddlewares/delet
 import { transferMoneyValidation } from "../middlewares/accountMiddlewares/transferMoneyValidation.middleware.js";
 
 import { generateToken } from "../utils/generateToken.js";
+import { nextCallProcess } from "../utils/nextCallProcess.js";
+
+import { transactionQueue } from "../constants.js";
 
 const route = express.Router();
 
@@ -19,7 +23,7 @@ route.post(
   addAccountValidation,
   async (req, res) => {
     try {
-      const { userId, email, accountNumber, pin } = req.body;
+      const { userId, accountNumber, pin } = req.body;
 
       const isAccountExists = await Account.findOne({
         accountNumber,
@@ -149,105 +153,186 @@ route.get("/accountDetails", authMiddleware, async (req, res) => {
 });
 
 route.post(
-  "/transfer",
+  "/transferMoney",
   authMiddleware,
   transferMoneyValidation,
   async (req, res) => {
-    const session = await mongoose.startSession();
-    try {
+    const ApiCall = async () => {
+      let isTransactionCompleted = false;
+
+      let isCommitedTransaction = false;
+      let isSessionEnded = false;
+
+      const session = await mongoose.startSession();
       session.startTransaction();
 
-      const { fromAccountNumber, toAccountNumber, pin, amount } = req.body;
+      try {
+        const { userId, fromAccountNumber, toAccountNumber, pin, amount } =
+          req.body;
 
-      if (fromAccountNumber == toAccountNumber) {
-        return res.status(400).json({
-          message: "Both Account Numbers are same",
-        });
-      }
+        if (fromAccountNumber == toAccountNumber) {
+          return res.status(400).json({
+            message: "Both Account Numbers are same",
+          });
+        }
 
-      const sender = await Account.findOne({
-        accountNumber: fromAccountNumber,
-      }).session(session);
-
-      if (!sender) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          message: "Sender Account Number is Invalid",
-        });
-      }
-
-      const receiver = await Account.findOne({
-        accountNumber: toAccountNumber,
-      }).session(session);
-
-      if (!receiver) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          message: "Receiver Account Number is Invalid",
-        });
-      }
-
-      if (amount <= 0) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          message: "Please Enter a valid amount",
-        });
-      }
-
-      const isPinCorrect = sender.isPinCorrect(pin);
-
-      if (!isPinCorrect) {
-        await session.abortTransaction();
-        return res.status(401).json({
-          message: "Incorrect pin",
-        });
-      }
-
-      if (sender.balance < amount) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          message: "Insufficient balance",
-        });
-      }
-
-      await Account.updateOne(
-        {
+        const sender = await Account.findOne({
+          userId,
           accountNumber: fromAccountNumber,
-        },
-        {
-          $inc: {
-            balance: -amount,
-          },
-        }
-      ).session(session);
+        }).session(session);
 
-      await Account.updateOne(
-        {
+        if (!sender) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: "Sender Account Number is Invalid",
+          });
+        }
+
+        const receiver = await Account.findOne({
           accountNumber: toAccountNumber,
-        },
-        {
-          $inc: {
-            balance: amount,
-          },
+        }).session(session);
+
+        if (!receiver) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: "Receiver Account Number is Invalid",
+          });
         }
-      ).session(session);
 
-      await session.commitTransaction();
-      await session.endSession();
+        if (amount <= 0) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: "Please Enter a valid amount",
+          });
+        }
 
-      res.status(200).json({
-        message: "Transfer Succesfully",
-      });
-    } catch (error) {
-      await session.abortTransaction();
-      await session.endSession();
-      return res.status(500).json({
-        err: error.name,
-        message:
-          "Something went wrong while transfering money || Please try again later",
-      });
-    }
+        const isPinCorrect = await sender.isPinCorrect(pin);
+
+        if (!isPinCorrect) {
+          await session.abortTransaction();
+          return res.status(401).json({
+            message: "Incorrect pin",
+          });
+        }
+
+        if (sender.balance < amount) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message: "Insufficient balance",
+          });
+        }
+
+        await Account.findOneAndUpdate(
+          {
+            accountNumber: fromAccountNumber,
+          },
+          {
+            $inc: {
+              balance: -amount,
+            },
+          }
+        ).session(session);
+
+        await Account.findOneAndUpdate(
+          {
+            accountNumber: toAccountNumber,
+          },
+          {
+            $inc: {
+              balance: amount,
+            },
+          }
+        ).session(session);
+
+        await session.commitTransaction();
+        isCommitedTransaction = true;
+        await session.endSession();
+        isSessionEnded = true;
+
+        isTransactionCompleted = true;
+
+        await Transaction.create({
+          senderAccountNumber: fromAccountNumber,
+          receiverAccountNumber: toAccountNumber,
+          amount,
+          success: isTransactionCompleted,
+        });
+        res.status(200).json({
+          message: "Transfer Succesfully",
+        });
+      } catch (error) {
+        if (!isCommitedTransaction) {
+          await session.abortTransaction();
+          await session.endSession();
+        }
+        if (isCommitedTransaction && !isSessionEnded) {
+          await session.endSession();
+        }
+
+        await Transaction.create({
+          senderAccountNumber: req.body.fromAccountNumber,
+          receiverAccountNumber: req.body.toAccountNumber,
+          amount: req.body.amount,
+          success: isTransactionCompleted,
+        });
+
+        return res.status(500).json({
+          err: error,
+          message:
+            "Something went wrong while transfering money || Please try again later",
+        });
+      }
+    };
+    transactionQueue.push(ApiCall);
+
+    nextCallProcess();
   }
 );
+
+route.get("/transactions", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const findUser = await User.findOne({ _id: userId }).select("accounts");
+
+    if (!findUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userAccountsSchemaIds = findUser.accounts;
+
+    const userAccountNumbers = [];
+
+    for (const userAccountId of userAccountsSchemaIds) {
+      const account = await Account.findOne({ _id: userAccountId });
+      if (account && account.accountNumber) {
+        userAccountNumbers.push(account.accountNumber);
+      }
+    }
+
+    let allUserTransactions = [];
+
+    for (const account of userAccountNumbers) {
+      const transactions = await Transaction.find({
+        $or: [
+          { senderAccountNumber: account },
+          { receiverAccountNumber: account },
+        ],
+      });
+      if (transactions.length > 0) {
+        allUserTransactions = allUserTransactions.concat(transactions);
+      }
+    }
+
+    return res.status(200).json({
+      message: "Transaction details fetched successfully",
+      transactions: allUserTransactions,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching transaction details",
+    });
+  }
+});
 
 export default route;
