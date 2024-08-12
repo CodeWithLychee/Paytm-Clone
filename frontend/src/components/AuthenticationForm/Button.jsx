@@ -6,7 +6,7 @@ function Button({ label, type, onClick }) {
       <input
         type={type}
         value={label}
-        className="cursor-pointer bg-green-600 w-full rounded-lg text-white text-md font-semibold py-2 md:text-lg hover:bg-green-700 duration-300"
+        className="cursor-pointer bg-blue-500 w-full rounded-lg text-white text-md font-semibold py-2 md:text-lg hover:bg-sky-600 duration-300"
         onClick={onClick}
       />
     </div>

@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 function Landing() {
   const navigate = useNavigate();
+
   useEffect(() => {
-    setTimeout(() => {
+    const ref = setInterval(() => {
       axios
         .get("/v1/user/checkLogin", {
           withCredentials: true,
@@ -21,12 +22,12 @@ function Landing() {
             toast.error("Server is currently down");
           } else {
             toast.error(err.response.data.message);
+            clearInterval(ref);
+            navigate("/signin");
           }
-          navigate("/signin");
         });
-    }, 2000);
+    }, 10000);
   }, []);
-
   return <div>Landing</div>;
 }
 
