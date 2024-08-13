@@ -30,7 +30,7 @@ function Landing() {
     {
       label: "Moments Worth Repeating",
       imageLink: "./Landing_page/2.png",
-      imageCSS: "w-[72%] h-[400px] mx-auto",
+      imageCSS: "w-[72%] h-[370px] mx-auto",
       description:
         "Cherish the good times with friends. Easily share expenses and make plans to do it all over again. Our app keeps you connected, making sure every moment is as effortless as the last.",
     },
