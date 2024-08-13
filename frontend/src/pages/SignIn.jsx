@@ -14,7 +14,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onCLick = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     axios
       .post(
@@ -40,8 +40,11 @@ function SignIn() {
       });
   };
   return (
-    <div className="bg-black h-screen flex justify-center items-center ">
-      <form className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-green-500/50 hover:duration-1000 ">
+    <div className="bg-white h-screen flex justify-center items-center ">
+      <form
+        onSubmit={onSubmit}
+        className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000 "
+      >
         <Heading label={"Sign in"} />
         <SubHeading label={"Enter your credentials to access your account"} />
         <InputBox
@@ -60,7 +63,7 @@ function SignIn() {
             setPassword(e.target.value);
           }}
         />
-        <Button label={"Sign in"} type={"submit"} onClick={onCLick} />
+        <Button label={"Sign in"} type={"submit"} onClick={onSubmit} />
         <ButtonWarning
           label={"Don't have an account"}
           buttonText={"Sign up"}

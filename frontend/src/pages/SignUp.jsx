@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -18,28 +18,22 @@ function SignUp() {
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const onClick = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(
-        "/v1/user/signup",
-        {
-          username,
-          fullName,
-          email,
-          password,
-          phoneNumber,
-        },
-        {
-          withCredentials: true,
-        }
-      )
+      .post("/v1/user/signup", {
+        username,
+        fullName,
+        email,
+        password,
+        phoneNumber,
+      })
       .then((response) => {
         toast.success(response.data.message);
         navigate("/dashboard");
       })
       .catch((err) => {
-        if (err.message == "Request failed with status code 500") {
+        if (err.response.status == "500") {
           toast.error("Server is currently down");
         } else {
           toast.error(err.response.data.message);
@@ -47,10 +41,13 @@ function SignUp() {
       });
   };
   return (
-    <div className="bg-black h-screen flex justify-center items-center">
-      <form className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-green-500/50 hover:duration-1000">
+    <div className="bg-white h-screen flex justify-center items-center">
+      <form
+        onSubmit={onSubmit}
+        className="border-black border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000"
+      >
         <Heading label={"Sign Up"} />
-        <SubHeading label={"Enter your information to create an account"} />
+        <SubHeading label={"Enter your details to create an account"} />
         <InputBox
           heading={"User Name"}
           type={"text"}
@@ -93,7 +90,7 @@ function SignUp() {
         />
         <InputBox heading={"Image"} type={"file"} placeholder={""} />
 
-        <Button type={"submit"} label={"Sign up"} onClick={onClick} />
+        <Button type={"submit"} label={"Sign up"} onClick={onSubmit} />
 
         <ButtonWarning
           label={"Already have an account"}

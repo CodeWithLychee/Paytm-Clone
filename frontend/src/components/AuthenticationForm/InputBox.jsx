@@ -10,7 +10,7 @@ function InputBox({ heading, type, placeholder, onChange }) {
         type={type}
         placeholder={placeholder}
         required
-        className="outline-none bg-transparent text-sm text-black font-semibold w-full py-2 px-2 border rounded-lg border-gray-500 md:text-base focus:border-sky-600 duration-300"
+        className="outline-none bg-transparent text-sm text-black font-medium w-full py-2 px-2 border rounded-lg border-black md:text-base focus:border-blue-600 focus:border-2 "
         onChange={onChange}
       />
     </div>

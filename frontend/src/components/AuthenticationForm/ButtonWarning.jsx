@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 function ButtonWarning({ label, buttonText, to }) {
   const navigate = useNavigate();
   return (
-    <div className="text-white flex justify-center items-center py-2 md:py-0 text-sm md:text-base">
+    <div className="text-black text-base font-medium flex justify-center items-center">
       <div>
         {label} {"?"}
       </div>
       <div
-        className="pl-2 cursor-pointer hover:opacity-70 duration-300"
+        className="pl-2 cursor-pointer hover:opacity-70 hover:text-blue-600 duration-300"
         onClick={() => {
           navigate(to);
         }}

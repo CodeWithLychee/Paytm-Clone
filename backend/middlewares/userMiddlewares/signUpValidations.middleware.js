@@ -19,15 +19,15 @@ const zodSchema = zod.object({
     .max(14, {
       message: "Password must contain atmost 14 characters",
     }),
-  phoneNumber: zod
-    .string()
-    .length(10, {
-      message: "PhoneNumber must conatins exactly 10 digits",
-    })
-    .regex(/^[1-9]\d{9}$/, {
-      message:
-        "Phone number must not start with 0 or doesn't contain any character",
-    }),
+  // phoneNumber: zod
+  //   .string()
+  //   .length(10, {
+  //     message: "PhoneNumber must conatins exactly 10 digits",
+  //   })
+  //   .regex(/^[1-9]\d{9}$/, {
+  //     message:
+  //       "Phone number must not start with 0 or doesn't contain any character",
+  //   }),
 });
 
 const signUpValidation = (req, res, next) => {
