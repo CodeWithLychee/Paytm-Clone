@@ -40,13 +40,16 @@ function SignIn() {
       });
   };
   return (
-    <div className="bg-white h-screen flex justify-center items-center ">
+    <div className="relative  md: h-screen flex justify-center items-center ">
       <form
         onSubmit={onSubmit}
-        className="border-gray-500 border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000 "
+        className="border-black absolute top-56 border-2 rounded-xl md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000 "
       >
         <Heading label={"Sign in"} />
-        <SubHeading label={"Enter your credentials to access your account"} />
+        <SubHeading
+          labelt={`Welcome Back !!`}
+          labelb={"Enter your credentials"}
+        />
         <InputBox
           heading={"Email"}
           type={"email"}

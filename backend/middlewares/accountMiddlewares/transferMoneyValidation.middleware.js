@@ -22,7 +22,7 @@ const zodSchema = zod.object({
     .min(4, { message: "Pin must contain atleast 4 characters" })
     .max(6, { message: "Pin must contain atmost 6 characters" }),
 
-  amount: zod.number(),
+  // amount: zod.number(),
 });
 
 const transferMoneyValidation = (req, res, next) => {

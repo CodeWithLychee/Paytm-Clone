@@ -41,13 +41,16 @@ function SignUp() {
       });
   };
   return (
-    <div className="bg-white h-screen flex justify-center items-center">
+    <div className=" relative md:bg-white h-screen flex justify-center items-center">
       <form
         onSubmit={onSubmit}
-        className="border-black border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000"
+        className="absolute top-20 border-black border-2 rounded-xl p-0 md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000"
       >
         <Heading label={"Sign Up"} />
-        <SubHeading label={"Enter your details to create an account"} />
+        <SubHeading
+          labelt={"Enter your details to create an account"}
+          labelb={""}
+        />
         <InputBox
           heading={"User Name"}
           type={"text"}

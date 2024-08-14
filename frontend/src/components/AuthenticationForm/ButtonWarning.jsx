@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function ButtonWarning({ label, buttonText, to }) {
   const navigate = useNavigate();
   return (
-    <div className="text-black text-base font-medium flex justify-center items-center">
+    <div className="px-6 text-black text-base font-medium flex justify-center items-center">
       <div>
         {label} {"?"}
       </div>

@@ -261,6 +261,8 @@ route.post(
           message: "Transfer Succesfully",
         });
       } catch (error) {
+        console.log("error");
+
         if (!isCommitedTransaction) {
           await session.abortTransaction();
           await session.endSession();
