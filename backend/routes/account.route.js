@@ -16,7 +16,7 @@ import { nextCallProcess } from "../utils/nextCallProcess.js";
 import { transactionQueue } from "../constants.js";
 
 const route = express.Router();
-
+//add account
 route.post(
   "/addAccount",
   authMiddleware,
@@ -75,6 +75,7 @@ route.post(
   }
 );
 
+//delte account
 route.delete(
   "/deleteAccount",
   authMiddleware,
@@ -131,10 +132,10 @@ route.delete(
   }
 );
 
+//find account details
 route.get("/accountDetails", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.body;
-
     const userAccountdetails = await Account.find({
       userId,
     }).select("-pin");
