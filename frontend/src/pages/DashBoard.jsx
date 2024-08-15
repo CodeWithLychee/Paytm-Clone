@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import SideBar from "./SideBar";
 import AccountCard from "../components/Dashboard/AccountCard";
 
+import Loading from "../components/Loading";
+
 function DashBoard() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -55,7 +57,7 @@ function DashBoard() {
         <div
           className={`${
             open ? "opacity-45" : ""
-          } duration-300 absolute left-24 mt-11 md:w-[80%] md:mx-auto lg:w-[90%] lg:mx-auto lg:opacity-100`}
+          }  absolute left-24 mt-11 md:w-[80%] md:mx-auto lg:w-[90%] lg:mx-auto lg:opacity-100`}
         >
           <div className="font-bold text-2xl mb-20 md:text-center md:text-4xl lg:text-5xl">
             {name
@@ -79,7 +81,9 @@ function DashBoard() {
           </div>
         </div>
       ) : (
-        ""
+        <div className="w-full">
+          <Loading />
+        </div>
       )}
     </div>
   );
