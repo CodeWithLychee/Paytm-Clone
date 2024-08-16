@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import axios from "axios";
 
 import Heading from "../components/AuthenticationForm/Heading";
@@ -14,35 +14,46 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    axios
-      .post(
-        "/v1/user/signin",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((response) => {
-        toast.success(response.data.message);
-        navigate("/dashboard");
-      })
-      .catch((err) => {
-        if (err.message == "Request failed with status code 500") {
-          toast.error("Server is currently down");
-        } else {
-          toast.error(err.response.data.message);
-        }
-      });
-  };
+  const changeEmailInput = useCallback((e) => {
+    setEmail(e.target.value);
+  }, []);
+
+  const changePasswordInput = useCallback((e) => {
+    setPassword(e.target.value);
+  }, []);
+
+  const onFormSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      axios
+        .post(
+          "/v1/user/signin",
+          {
+            email,
+            password,
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((response) => {
+          toast.success(response.data.message);
+          navigate("/dashboard");
+        })
+        .catch((err) => {
+          if (err.message == "Request failed with status code 500") {
+            toast.error("Server is currently down");
+          } else {
+            toast.error(err.response.data.message);
+          }
+        });
+    },
+    [[email, password, navigate]]
+  );
   return (
     <div className="relative  md: h-screen flex justify-center items-center ">
       <form
-        onSubmit={onSubmit}
+        onSubmit={onFormSubmit}
         className="border-black absolute top-56 border-2 rounded-xl md:px-6 pb-2 hover:shadow-2xl hover:shadow-blue-500 transition-shadow duration-1000 "
       >
         <Heading label={"Sign in"} />
@@ -54,19 +65,15 @@ function SignIn() {
           heading={"Email"}
           type={"email"}
           placeholder={"abhinav@example.com"}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+          onChange={changeEmailInput}
         />
         <InputBox
           heading={"Password"}
           type={"password"}
           placeholder={""}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={changePasswordInput}
         />
-        <Button label={"Sign in"} type={"submit"} onClick={onSubmit} />
+        <Button label={"Sign in"} type={"submit"} onClick={onFormSubmit} />
         <ButtonWarning
           label={"Don't have an account"}
           buttonText={"Sign up"}

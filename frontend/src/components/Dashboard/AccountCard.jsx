@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function AccountCard({ userAccount }) {
+const AccountCard = React.memo(({ userAccount }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -9,15 +9,15 @@ function AccountCard({ userAccount }) {
         return (
           <div
             key={index}
-            className="border-2 border-blue-500 rounded-xl pt-6 pb-5 px-4 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto hover:shadow-2xl lg:pl-6"
+            className="border-2 border-blue-500 rounded-xl pt-6 pb-4 px-3 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto hover:shadow-2xl lg:pl-6"
           >
             <div className="flex gap-1">
-              <p className="font-medium">Account Number :</p>
-              <p>{accountNumber}</p>
+              <p className="font-medium shrink-0">Account Number :</p>
+              <p className="font-medium">{accountNumber}</p>
             </div>
             <div className="flex gap-1">
               <p className="font-medium">Balance :</p>
-              <p>
+              <p className="font-medium">
                 {`₹ ${" "}`}
                 {balance}
               </p>
@@ -48,6 +48,6 @@ function AccountCard({ userAccount }) {
       })}
     </>
   );
-}
+});
 
 export default AccountCard;

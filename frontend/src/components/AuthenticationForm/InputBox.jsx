@@ -1,6 +1,6 @@
 import React from "react";
 
-function InputBox({ heading, type, placeholder, onChange }) {
+const InputBox = React.memo(({ heading, type, placeholder, onChange }) => {
   return (
     <div className="pt-1 mx-6 md:mx-0">
       <div className="text-black font-semibold text-sm py-2 pl-1 md:text-base">
@@ -15,6 +15,6 @@ function InputBox({ heading, type, placeholder, onChange }) {
       />
     </div>
   );
-}
+});
 
 export default InputBox;

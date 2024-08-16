@@ -1,6 +1,6 @@
 import React from "react";
 
-function Loading() {
+const Loading = React.memo(() => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="flex space-x-2">
@@ -13,6 +13,6 @@ function Loading() {
       </div>
     </div>
   );
-}
+});
 
 export default Loading;

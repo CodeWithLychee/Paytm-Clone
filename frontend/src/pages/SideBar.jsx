@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const sideBarElements = [
   {
     svg: (
@@ -18,6 +20,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Main menu",
+    to: "",
   },
   {
     svg: (
@@ -37,6 +40,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Home",
+    to: "/dashboard",
   },
   {
     svg: (
@@ -56,6 +60,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Add Account",
+    to: "/addAccount",
   },
   {
     svg: (
@@ -75,6 +80,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Update Details",
+    to: "/updateDetails",
   },
   {
     svg: (
@@ -94,6 +100,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Transfer",
+    to: "/transferMoney",
   },
   {
     svg: (
@@ -113,6 +120,7 @@ const sideBarElements = [
       </svg>
     ),
     text: "Transactions",
+    to: "/transactions",
   },
   {
     svg: (
@@ -137,10 +145,11 @@ const sideBarElements = [
       </svg>
     ),
     text: "Settings",
+    to: "/settings",
   },
 ];
 
-function SideBar({ open, setOpen }) {
+const SideBar = React.memo(({ open, setOpen }) => {
   return (
     <div
       className={` bg-blue-100 h-screen p-3 pt-8 md:p-5 md:pt-8 ${
@@ -180,15 +189,17 @@ function SideBar({ open, setOpen }) {
               text={element.text}
               open={open}
               setOpen={setOpen}
+              to={element.to}
             />
           );
         })}
       </div>
     </div>
   );
-}
+});
 
-function Button({ svg, text, open, setOpen }) {
+function Button({ svg, text, open, setOpen, to }) {
+  const navigate = useNavigate();
   const [textColor, setTextColor] = useState("text-black");
   return (
     <div
@@ -199,6 +210,7 @@ function Button({ svg, text, open, setOpen }) {
       } `}
       onClick={() => {
         setTextColor("text-blue-600");
+        navigate(to);
       }}
     >
       <div className={` ${text == "Main menu" ? "pt-1 " : ""}`}>{svg}</div>
@@ -208,4 +220,5 @@ function Button({ svg, text, open, setOpen }) {
     </div>
   );
 }
+
 export default SideBar;

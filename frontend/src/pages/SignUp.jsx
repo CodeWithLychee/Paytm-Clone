@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -17,6 +17,22 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  const changeUsernameInput = useCallback((e) => {
+    setUsername(e.target.value);
+  }, []);
+  const changeFullNameInput = useCallback((e) => {
+    setFullName(e.target.value);
+  }, []);
+  const changeEmailInput = useCallback((e) => {
+    setEmail(e.target.value);
+  }, []);
+  const changePasswordInput = useCallback((e) => {
+    setPassword(e.target.value);
+  }, []);
+  const changePhoneNumberInput = useCallback((e) => {
+    setPhoneNumber(e.target.value);
+  }, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -55,41 +71,31 @@ function SignUp() {
           heading={"User Name"}
           type={"text"}
           placeholder={"abhinav"}
-          onChange={(e) => {
-            setUsername(e.target.value);
-          }}
+          onChange={changeUsernameInput}
         />
         <InputBox
           heading={"Full Name"}
           type={"text"}
           placeholder={"Abhinav Sharma"}
-          onChange={(e) => {
-            setFullName(e.target.value);
-          }}
+          onChange={changeFullNameInput}
         />
         <InputBox
           heading={"Email"}
           type={"email"}
           placeholder={"abhinavsharma@example.com"}
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+          onChange={changeEmailInput}
         />
         <InputBox
           heading={"Password"}
           type={"password"}
           placeholder={""}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={changePasswordInput}
         />
         <InputBox
           heading={"Phone Number"}
           type={"tel"}
           placeholder={""}
-          onChange={(e) => {
-            setPhoneNumber(e.target.value);
-          }}
+          onChange={changePhoneNumberInput}
         />
         <InputBox heading={"Image"} type={"file"} placeholder={""} />
 

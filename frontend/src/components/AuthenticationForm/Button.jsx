@@ -1,6 +1,6 @@
 import React from "react";
 
-function Button({ label, type, onSubmit }) {
+const Button = React.memo(({ label, type, onSubmit }) => {
   return (
     <div className="w-full pt-4 pb-3 px-6 md:px-0 ">
       <input
@@ -11,6 +11,6 @@ function Button({ label, type, onSubmit }) {
       />
     </div>
   );
-}
+});
 
 export default Button;
