@@ -11,16 +11,24 @@ export const initVoice = () => {
     ) || voices[0];
 };
 
-export const speakText = async (text) => {
-  if (!selectedVoice) {
-    initVoice();
-  }
+export const speakText = (text, rate = 0.8) => {
+  return new Promise((resolve) => {
+    if (!selectedVoice) {
+      initVoice();
+    }
 
-  const utterance = new window.SpeechSynthesisUtterance(text);
+    const utterance = new window.SpeechSynthesisUtterance(text);
 
-  if (selectedVoice) {
-    utterance.voice = selectedVoice;
-  }
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
 
-  window.speechSynthesis.speak(utterance);
+    utterance.rate = rate;
+
+    utterance.onend = () => {
+      resolve();
+    };
+
+    window.speechSynthesis.speak(utterance);
+  });
 };
