@@ -8,8 +8,15 @@ import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
 import { toast } from "react-toastify";
 import SideBar from "./SideBar";
+import { speakText } from "../Voice";
 
 function SendMoney() {
+  const date = new Date();
+  const todayDate = date.toDateString();
+  const getOnlyDate = todayDate.split(" ");
+  const time = date.toLocaleTimeString();
+  console.log(time);
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [senderAccountNUmber, setSenderAccountNumber] = useState("");
@@ -57,9 +64,14 @@ function SendMoney() {
             withCredentials: true,
           }
         )
-        .then((response) => {
+        .then(async (response) => {
           toast.success(response.data.message);
-          navigate("/dasboard");
+          let balanceLeft = response.data.balanceLeft.balance;
+          speakText(
+            `An amount of ₹ ${amount} has been DEBITED to your account on ${getOnlyDate[1]} ${getOnlyDate[2]} ${getOnlyDate[3]}. Total available balance is ₹ ${balanceLeft}`
+          ).then(() => {
+            navigate("/dashboard");
+          });
         })
         .catch((err) => {
           if (err.response.status == "500") {

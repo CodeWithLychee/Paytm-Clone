@@ -259,8 +259,17 @@ route.post(
           amount,
           success: isTransactionCompleted,
         });
+
+        const senderAccountNumberbalance = await Account.findOne(
+          {
+            accountNumber: fromAccountNumber,
+          },
+          { new: true }
+        ).select("balance -_id");
+
         res.status(200).json({
           message: "Transfer Succesfully",
+          balanceLeft: senderAccountNumberbalance,
         });
       } catch (error) {
         console.log("error");
