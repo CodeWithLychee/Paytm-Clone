@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const AccountCard = React.memo(({ userAccount }) => {
+const AccountCard = React.memo(({ userAccount, open, setOpen }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -9,7 +9,9 @@ const AccountCard = React.memo(({ userAccount }) => {
         return (
           <div
             key={index}
-            className="border-2 border-blue-500 rounded-xl pt-6 pb-4 px-3 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto hover:shadow-2xl lg:pl-6"
+            className={`border-2 border-blue-500 rounded-xl pt-6 pb-4 px-3 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto  lg:pl-6 ${
+              !open ? "hover:shadow-xl" : ""
+            } lg:hover:shadow-xl`}
           >
             <div className="flex gap-1">
               <p className="font-medium shrink-0">Account Number :</p>
@@ -23,10 +25,9 @@ const AccountCard = React.memo(({ userAccount }) => {
               </p>
             </div>
             <div
-              className="flex justify-end cursor-pointer"
-              onClick={() => {
-                navigate("/delete");
-              }}
+              className={` flex justify-end ${
+                !open ? "cursor-pointer" : ""
+              } lg:cursor-pointer`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +35,14 @@ const AccountCard = React.memo(({ userAccount }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 text-red-500 "
+                className="size-5 text-red-500"
+                onClick={() => {
+                  if (open && window.innerWidth < 1024) {
+                    setOpen(!open);
+                  } else {
+                    navigate("/delete");
+                  }
+                }}
               >
                 <path
                   strokeLinecap="round"

@@ -12,34 +12,52 @@ function DashBoard() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState();
   const [userAccount, setUserAccount] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     axios
-      .get("/v1/user/name", {
+      .get("/v1/user/checkLogin", {
         withCredentials: true,
       })
       .then((response) => {
-        setName(response.data.fullName.fullName);
+        setIsLoggedIn(true);
       })
       .catch((err) => {
-        toast.error("Something went wrong, Please login again");
         navigate("/signin");
       });
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
-    axios
-      .get("/v1/account/Accountdetails", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setUserAccount(response.data.userAccountdetails);
-      })
-      .catch((err) => {
-        toast.error("Something went wrong, Please login again");
-        navigate("/signin");
-      });
-  }, []);
+    if (isLoggedIn) {
+      axios
+        .get("/v1/user/name", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setName(response.data.fullName.fullName);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong, Please login again");
+          navigate("/signin");
+        });
+    }
+  }, [isLoggedIn, navigate]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      axios
+        .get("/v1/account/Accountdetails", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setUserAccount(response.data.userAccountdetails);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong, Please login again");
+          navigate("/signin");
+        });
+    }
+  }, [isLoggedIn, navigate]);
 
   const calculateBalance = useMemo(() => {
     let totalBalance = 0;
@@ -51,27 +69,22 @@ function DashBoard() {
 
   return (
     <div className="relative min-h-screen w-full flex">
-      <div className="absolute z-10 left-0">
+      <div className="fixed z-10 left-0 h-full">
         <SideBar open={open} setOpen={setOpen} />
       </div>
-      {name && userAccount ? (
+      {name ? (
         <div
           className={`${
             open ? "opacity-45" : ""
           } min-h-screen w-full lg:opacity-100`}
           onClick={() => {
-            if (open) {
+            if (open && window.innerWidth < 1024) {
               setOpen(!open);
             }
           }}
         >
           <div
-            className={`w-[70%] ml-[23%]  md:w-[80%] md:mx-auto  lg:w-[90%] lg:mx-auto `}
-            onClick={(e) => {
-              if (open) {
-                setOpen(false);
-              }
-            }}
+            className={`w-[70%] ml-[23%]  md:w-[80%] md:mx-auto  lg:w-[90%] lg:mx-auto`}
           >
             <div className="mt-20 font-bold text-2xl mb-20 md:text-center md:text-4xl lg:text-5xl">
               {name
@@ -84,13 +97,17 @@ function DashBoard() {
               Account Details :
             </div>
             <div className="">
-              <AccountCard userAccount={userAccount} />
+              <AccountCard
+                userAccount={userAccount}
+                open={open}
+                setOpen={setOpen}
+              />
             </div>
             <div className="flex gap-4 md:pl-[15%] lg:text-3xl lg:justify-center lg:pl-0">
               <p className="text-lg font-semibold lg:text-xl">
                 Total Balance :
               </p>
-              <p className="flex items-center text-lg font-semibold lg:text-xl">
+              <p className=" pb-5 flex items-center text-lg font-semibold lg:text-xl">
                 {`₹ ${" "}`}
                 {calculateBalance}
               </p>

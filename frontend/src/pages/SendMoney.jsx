@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -16,6 +16,17 @@ function SendMoney() {
   const [reciverAccountNUmber, setReciverAccountNumber] = useState("");
   const [pin, setPin] = useState("");
   const [amount, setAmount] = useState();
+
+  useEffect(() => {
+    axios
+      .get("/v1/user/checkLogin", {
+        withCredentials: true,
+      })
+      .then((response) => {})
+      .catch((err) => {
+        navigate("/signin");
+      });
+  }, [navigate]);
 
   const changeSenderAccountNumberInput = useCallback((e) => {
     setSenderAccountNumber(e.target.value);
@@ -65,7 +76,7 @@ function SendMoney() {
   return (
     <div>
       <div className="relative min-h-screen w-full flex">
-        <div className="z-10 absolute left-0">
+        <div className="fixed z-10 left-0 h-full">
           <SideBar open={open} setOpen={setOpen} />
         </div>
         <div

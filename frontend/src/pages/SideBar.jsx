@@ -200,16 +200,14 @@ const SideBar = React.memo(({ open, setOpen }) => {
 
 function Button({ svg, text, open, setOpen, to }) {
   const navigate = useNavigate();
-  const [textColor, setTextColor] = useState("text-black");
   return (
     <div
       className={`p-3 pl-2 gap-4 flex font-bold  ${
         text != "Main menu"
-          ? `${textColor} cursor-pointer hover:bg-blue-200 duration-300 rounded-lg`
+          ? `cursor-pointer hover:bg-blue-200 duration-300 rounded-lg`
           : "text-2xl font-extrabold "
       } `}
       onClick={() => {
-        setTextColor("text-blue-600");
         navigate(to);
       }}
     >
