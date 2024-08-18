@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
-import SideBar from "./SideBar";
 
 import Heading from "../components/AuthenticationForm/Heading";
 import SubHeading from "../components/AuthenticationForm/SubHeading";
@@ -9,11 +8,9 @@ import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
 
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
-function AddAccount() {
+function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [accountNumber, setAccountNumber] = useState("");
   const [pin, setPin] = useState("");
 
@@ -74,17 +71,17 @@ function AddAccount() {
   );
 
   return (
-    <div className="relative min-h-screen w-full ">
-      <div className="fixed z-10 left-0 h-full">
-        <SideBar open={open} setOpen={setOpen} />
-      </div>
+    <div className="min-h-screen w-full ">
       <div
         className={`${
           open ? "opacity-45" : ""
         } min-h-screen w-full lg:opacity-100`}
         onClick={() => {
           if (open && window.innerWidth < 1024) {
-            setOpen(!open);
+            toggleOpen();
+          }
+          if (isOpen && window.innerWidth < 1024) {
+            toggleDropdown();
           }
         }}
       >

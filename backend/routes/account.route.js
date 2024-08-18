@@ -168,62 +168,73 @@ route.post(
       const session = await mongoose.startSession();
       session.startTransaction();
 
+      const { userId, fromAccountNumber, toAccountNumber, pin, amount } =
+        req.body;
+
+      if (fromAccountNumber == toAccountNumber) {
+        return res.status(400).json({
+          message: "Both Account Numbers are same",
+        });
+      }
+
+      const sender = await Account.findOne({
+        userId,
+        accountNumber: fromAccountNumber,
+      }).session(session);
+
+      if (!sender) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Sender Account Number is Invalid",
+        });
+      }
+
+      const receiver = await Account.findOne({
+        accountNumber: toAccountNumber,
+      }).session(session);
+
+      if (!receiver) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Receiver Account Number is Invalid",
+        });
+      }
+
+      if (amount <= 0) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Please Enter a valid amount",
+        });
+      }
+
+      const isPinCorrect = await sender.isPinCorrect(pin);
+
+      if (!isPinCorrect) {
+        await session.abortTransaction();
+        return res.status(401).json({
+          message: "Incorrect pin",
+        });
+      }
+
+      if (sender.balance < amount) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Insufficient balance",
+        });
+      }
+
+      const senderId = await User.findOne({
+        _id: userId,
+      });
+
+      const reciverId = await User.findOne({ _id: receiver.userId });
+
+      req.body.senderId = senderId._id;
+      req.body.senderName = senderId.fullName;
+      req.body.receiverId = reciverId._id;
+      req.body.receiverName = reciverId.fullName;
+
       try {
-        const { userId, fromAccountNumber, toAccountNumber, pin, amount } =
-          req.body;
-
-        if (fromAccountNumber == toAccountNumber) {
-          return res.status(400).json({
-            message: "Both Account Numbers are same",
-          });
-        }
-
-        const sender = await Account.findOne({
-          userId,
-          accountNumber: fromAccountNumber,
-        }).session(session);
-
-        if (!sender) {
-          await session.abortTransaction();
-          return res.status(400).json({
-            message: "Sender Account Number is Invalid",
-          });
-        }
-
-        const receiver = await Account.findOne({
-          accountNumber: toAccountNumber,
-        }).session(session);
-
-        if (!receiver) {
-          await session.abortTransaction();
-          return res.status(400).json({
-            message: "Receiver Account Number is Invalid",
-          });
-        }
-
-        if (amount <= 0) {
-          await session.abortTransaction();
-          return res.status(400).json({
-            message: "Please Enter a valid amount",
-          });
-        }
-
-        const isPinCorrect = await sender.isPinCorrect(pin);
-
-        if (!isPinCorrect) {
-          await session.abortTransaction();
-          return res.status(401).json({
-            message: "Incorrect pin",
-          });
-        }
-
-        if (sender.balance < amount) {
-          await session.abortTransaction();
-          return res.status(400).json({
-            message: "Insufficient balance",
-          });
-        }
-
         await Account.findOneAndUpdate(
           {
             accountNumber: fromAccountNumber,
@@ -254,7 +265,11 @@ route.post(
         isTransactionCompleted = true;
 
         await Transaction.create({
+          senderId: senderId._id,
+          senderName: senderId.fullName,
           senderAccountNumber: fromAccountNumber,
+          receiverId: reciverId._id,
+          receiverName: reciverId.fullName,
           receiverAccountNumber: toAccountNumber,
           amount,
           success: isTransactionCompleted,
@@ -283,7 +298,11 @@ route.post(
         }
 
         await Transaction.create({
+          senderId: req.body.senderId,
+          senderName: req.body.senderName,
           senderAccountNumber: req.body.fromAccountNumber,
+          receiverName: req.body.receiverName,
+          reciverId: req.body.reciverId,
           receiverAccountNumber: req.body.toAccountNumber,
           amount: req.body.amount,
           success: isTransactionCompleted,
@@ -302,50 +321,53 @@ route.post(
   }
 );
 
-route.get("/transactions", authMiddleware, async (req, res) => {
+route.get("/allPayments", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.body;
 
-    const findUser = await User.findOne({
-      _id: userId,
-    }).select("accounts");
-
-    if (!findUser) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    const userAccountSchemaIds = findUser.accounts;
-    //now we have found the user which contains an accounts array having account schema id
-    const userAccountNumbers = [];
-    for (const id of userAccountSchemaIds) {
-      const account = await Account.findOne({
-        _id: id,
-      });
-
-      if (account && account.accountNumber) {
-        userAccountNumbers.push(account.accountNumber);
-      }
-    }
-
-    let allUserTransactions = [];
-    for (const account of userAccountNumbers) {
-      const transaction = await Transaction.find({
-        $or: [
-          { senderAccountNumber: account },
-          { receiverAccountNumber: account },
-        ],
-      });
-
-      if (transaction.length > 0) {
-        allUserTransactions = [...allUserTransactions, ...transaction];
-      }
-    }
+    const transaction = await Transaction.find({
+      $or: [{ senderId: userId }, { receiverId: userId }],
+    });
 
     return res.status(200).json({
       message: "Transaction details fetched succesfully",
-      transaction: allUserTransactions,
+      transaction,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching transaction details",
+    });
+  }
+});
+route.get("/paymentSend", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const transaction = await Transaction.find({
+      senderId: userId,
+    });
+
+    return res.status(200).json({
+      message: "Transaction details fetched succesfully",
+      transaction,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while fetching transaction details",
+    });
+  }
+});
+route.get("/paymentRecived", authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const transaction = await Transaction.find({
+      receiverId: userId,
+    });
+
+    return res.status(200).json({
+      message: "Transaction details fetched succesfully",
+      transaction,
     });
   } catch (error) {
     return res.status(500).json({

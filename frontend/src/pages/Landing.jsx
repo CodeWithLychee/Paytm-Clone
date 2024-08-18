@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 
 function Landing() {
   const navigate = useNavigate();
+
   useEffect(() => {
     let ref = setInterval(() => {
       axios

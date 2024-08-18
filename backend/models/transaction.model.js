@@ -1,11 +1,26 @@
 import mongoose from "mongoose";
-import { boolean } from "zod";
 
 const transactionSchema = new mongoose.Schema(
   {
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, "Sender's ID is required"],
+    },
+    senderName: {
+      type: String,
+      required: [true, "Sender's Name is required"],
+    },
     senderAccountNumber: {
       type: String,
       required: [true, "Sender's Account Number is required"],
+    },
+    receiverName: {
+      type: String,
+      required: [true, "Receiver's Name is required"],
+    },
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: [true, "Receiver's ID is required"],
     },
     receiverAccountNumber: {
       type: String,

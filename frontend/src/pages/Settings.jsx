@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import SideBar from "./SideBar";
 
-function Settings() {
-  const [open, setOpen] = useState(false);
+const Settings = React.memo(({ open, toggleOpen, isOpen, toggleDropdown }) => {
   return (
     <div className="relative min-h-screen w-full ">
-      <div className="fixed z-10 left-0 h-full">
-        <SideBar open={open} setOpen={setOpen} />
-      </div>
       <div
         className={`min-h-screen w-full flex justify-center items-center ${
           open ? "opacity-45" : ""
         }`}
         onClick={() => {
           if (open && window.innerWidth < 1024) {
-            setOpen(!open);
+            toggleOpen();
+          }
+          if (isOpen && window.innerWidth < 1024) {
+            toggleDropdown();
           }
         }}
       >
@@ -22,6 +20,6 @@ function Settings() {
       </div>
     </div>
   );
-}
+});
 
 export default Settings;

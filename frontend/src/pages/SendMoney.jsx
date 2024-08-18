@@ -7,18 +7,17 @@ import Heading from "../components/AuthenticationForm/Heading";
 import SubHeading from "../components/AuthenticationForm/SubHeading";
 import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
+
 import { toast } from "react-toastify";
-import SideBar from "./SideBar";
 import { speakText } from "../Voice";
 
-function SendMoney() {
+function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
   const [moneySent, setMoneySent] = useState(false);
   const date = new Date();
   const todayDate = date.toDateString();
   const getOnlyDate = todayDate.split(" ");
 
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const [senderAccountNUmber, setSenderAccountNumber] = useState("");
   const [reciverAccountNUmber, setReciverAccountNumber] = useState("");
   const [pin, setPin] = useState("");
@@ -94,17 +93,17 @@ function SendMoney() {
 
   return (
     <div>
-      <div className="relative min-h-screen w-full flex">
-        <div className="fixed z-10 left-0 h-full">
-          <SideBar open={open} setOpen={setOpen} />
-        </div>
+      <div className="min-h-screen w-full flex">
         <div
           className={`${
             open ? "opacity-45" : ""
           } min-h-screen w-full lg:opacity-100`}
           onClick={() => {
-            if (open) {
-              setOpen(!open);
+            if (open && window.innerWidth < 1024) {
+              toggleOpen();
+            }
+            if (isOpen && window.innerWidth < 1024) {
+              toggleDropdown();
             }
           }}
         >

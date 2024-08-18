@@ -3,12 +3,11 @@ let selectedVoice = null;
 export const initVoice = () => {
   const voices = window.speechSynthesis.getVoices();
 
-  selectedVoice =
-    voices.find(
-      (voice) =>
-        voice.name.includes("Google UK English Female") ||
-        voice.name.includes("Google US English Female")
-    ) || voices[0];
+  selectedVoice = voices.find(
+    (voice) =>
+      voice.name.includes("Google UK English Female") ||
+      voice.name.includes("Google US English Female")
+  );
 };
 
 export const speakText = (text, rate = 0.8) => {

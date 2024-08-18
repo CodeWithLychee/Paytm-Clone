@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
-import SideBar from "./SideBar";
-import AccountCard from "../components/Dashboard/AccountCard";
 
+import AccountCard from "../components/Dashboard/AccountCard";
 import Loading from "../components/Loading";
 
-function DashBoard() {
+import { toast } from "react-toastify";
+
+function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+
   const [name, setName] = useState();
   const [userAccount, setUserAccount] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,10 +68,7 @@ function DashBoard() {
   }, [userAccount]);
 
   return (
-    <div className="relative min-h-screen w-full flex">
-      <div className="fixed z-10 left-0 h-full">
-        <SideBar open={open} setOpen={setOpen} />
-      </div>
+    <div className="min-h-screen w-full flex">
       {name ? (
         <div
           className={`${
@@ -79,7 +76,10 @@ function DashBoard() {
           } min-h-screen w-full lg:opacity-100`}
           onClick={() => {
             if (open && window.innerWidth < 1024) {
-              setOpen(!open);
+              toggleOpen();
+            }
+            if (isOpen && window.innerWidth < 1024) {
+              toggleDropdown();
             }
           }}
         >
@@ -100,7 +100,7 @@ function DashBoard() {
               <AccountCard
                 userAccount={userAccount}
                 open={open}
-                setOpen={setOpen}
+                setOpen={toggleOpen}
               />
             </div>
             <div className="flex gap-4 md:pl-[15%] lg:text-3xl lg:justify-center lg:pl-0">

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const AccountCard = React.memo(({ userAccount, open, setOpen }) => {
+const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -38,7 +38,7 @@ const AccountCard = React.memo(({ userAccount, open, setOpen }) => {
                 className="size-5 text-red-500"
                 onClick={() => {
                   if (open && window.innerWidth < 1024) {
-                    setOpen(!open);
+                    toggleOpen;
                   } else {
                     navigate("/delete");
                   }
