@@ -22,21 +22,7 @@ function Transactions() {
       });
   }, [navigate]);
 
-  const allPayments = () => {
-    axios
-      .get("/v1/account/allPayments", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setPayments(response.data.transaction);
-        setFilter("all");
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-        navigate("/signin");
-      });
-  };
-  const paymentSend = () => {
+  useEffect(() => {
     axios
       .get("/v1/account/paymentSend", {
         withCredentials: true,
@@ -49,20 +35,39 @@ function Transactions() {
         toast.error(err.response.data.message);
         navigate("/signin");
       });
+  }, []);
+
+  const paymentSend = () => {
+    if (filter != "paid") {
+      axios
+        .get("/v1/account/paymentSend", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setPayments(response.data.transaction);
+          setFilter("paid");
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+          navigate("/signin");
+        });
+    }
   };
   const paymentRecived = () => {
-    axios
-      .get("/v1/account/paymentRecived", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setPayments(response.data.transaction);
-        setFilter("received");
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-        navigate("/signin");
-      });
+    if (filter != "received") {
+      axios
+        .get("/v1/account/paymentRecived", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setPayments(response.data.transaction);
+          setFilter("received");
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+          navigate("/signin");
+        });
+    }
   };
 
   return (
@@ -75,13 +80,7 @@ function Transactions() {
           <p className="text-black text-center font-medium text-lg ">
             Please select the payment type :{" "}
           </p>
-          <div className="flex justify-around pt-4 items-center">
-            <button
-              className="border-2 border-black w-[27%] rounded-lg p-1  hover:bg-blue-400"
-              onClick={allPayments}
-            >
-              All
-            </button>
+          <div className="flex justify-center gap-5 pt-4 items-center">
             <button
               className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400"
               onClick={paymentSend}
@@ -109,13 +108,6 @@ function Transactions() {
 }
 
 function PaymentCard({ payments, filter }) {
-  const cardStyles =
-    "border border-gray-300 rounded-lg p-4 mb-4 w-[80%] mx-auto shadow-lg";
-  const logoStyles = "h-8 w-8 rounded-full border border-gray-300";
-  const sectionStyles = "flex flex-col items-center";
-  const infoStyles = "text-gray-700";
-  const boldTextStyles = "font-semibold text-gray-800";
-
   return (
     <>
       {payments.map((payment, index) => {
@@ -126,12 +118,14 @@ function PaymentCard({ payments, filter }) {
         return (
           <div
             key={index}
-            className="border border-black rounded-lg pt-2
-            p-4 mb-4 w-[70%] ml-[23%] shadow-lg"
+            className={`border-[2.3px] rounded-lg pt-2
+            p-4 mb-4 w-[70%] ml-[22%] shadow-lg ${
+              payment.success ? "border-green-500" : "border-red-500"
+            }`}
           >
             <div className="flex justify-between">
               <div className="flex flex-col items-center">
-                <p className="text-lg p-1 border border-black rounded-lg">
+                <p className="text-lg p-1 border border-black rounded-lg bg-blue-400">
                   Sender
                 </p>
                 <div className="flex pt-3">
@@ -139,13 +133,13 @@ function PaymentCard({ payments, filter }) {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    className="size-6"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                     />
                   </svg>
@@ -161,22 +155,20 @@ function PaymentCard({ payments, filter }) {
               <div className="flex justify-center pt-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-6 text-green-700"
+                  fill="currentColor"
+                  className="size-6 text-purple-600"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-                  />
+                  <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
                 </svg>
               </div>
               <div className="flex items-center"></div>
               <div className="flex flex-col items-center">
-                <p className="text-lg p-1 border border-black rounded-lg">
+                <p
+                  className={`text-lg p-1 border border-black rounded-lg ${
+                    payment.success ? "bg-green-400" : "bg-red-500"
+                  }`}
+                >
                   Receiver
                 </p>
                 <div className="flex pt-3">
@@ -184,13 +176,13 @@ function PaymentCard({ payments, filter }) {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    className="size-6"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                     />
                   </svg>
@@ -198,18 +190,53 @@ function PaymentCard({ payments, filter }) {
                     {payment.receiverName}
                   </p>
                 </div>
-                <p className="text-gray-800 pt-2">
+                <p className="text-black pt-2">
                   {payment.receiverAccountNumber}
                 </p>
               </div>
             </div>
             <div className="flex justify-evenly mt-4">
-              <p className="text-xl font-bold text-green-600 flex justify-center items-center">
-                - ₹ {payment.amount}
-              </p>
+              <div className="flex flex-col justify-center items-center">
+                <p
+                  className={`text-xl font-bold ${
+                    payment.success ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {filter == "paid" && payment.success ? "-" : ""}
+                  {filter == "received" && payment.success ? "+" : ""}
+                  {}₹ {payment.amount}
+                </p>
+                {!payment.success ? (
+                  <div className="flex justify-center items-center gap-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      className="size-4 text-red-500"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+
+                    <p className="text-red-500 font-semibold ">Failed</p>
+                  </div>
+                ) : (
+                  <div className="w-0 h-0"></div>
+                )}
+              </div>
               <div className="font-medium">
-                <p className={infoStyles}>Paid on {formattedCreatedAt}</p>
-                <p className={infoStyles}>{formattedCreatedTime}</p>
+                <p className="text-gray-700">
+                  {!payment.success ? "Failed on" : ""}
+                  {filter == "paid" && payment.success ? "Paid on" : ""}
+                  {filter == "received" && payment.success
+                    ? "Received on"
+                    : ""}{" "}
+                  {formattedCreatedAt}
+                </p>
+                <p className="text-gray-700">{formattedCreatedTime}</p>
               </div>
             </div>
           </div>
