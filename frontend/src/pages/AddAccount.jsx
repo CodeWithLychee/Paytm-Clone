@@ -21,7 +21,12 @@ function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
       })
       .then((response) => {})
       .catch((err) => {
-        navigate("/signin");
+        if (err.message == "Request failed with status code 500") {
+          toast.error("Server is currently down");
+        } else {
+          toast.error("Something went wrong, Please login again");
+        }
+        navigate("/auth/signin");
       });
   }, [navigate]);
 
@@ -54,14 +59,13 @@ function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
           }
         )
         .then((response) => {
-          console.log(response.data);
           toast.success(response.data.message);
-          navigate("/dashboard");
+          navigate("/user/dashboard");
         })
         .catch((err) => {
           if (err.message == "Request failed with status code 500") {
-            toast.error("Server is currently down");
-            navigate("/signin");
+            toast.error("Server is currently down || Please try again later");
+            navigate("/auth/signin");
           } else {
             toast.error(err.response.data.message);
           }

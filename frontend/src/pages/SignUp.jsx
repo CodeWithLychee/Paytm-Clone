@@ -46,11 +46,11 @@ function SignUp() {
       })
       .then((response) => {
         toast.success(response.data.message);
-        navigate("/dashboard");
+        navigate("/user/dashboard");
       })
       .catch((err) => {
         if (err.response.status == "500") {
-          toast.error("Server is currently down");
+          toast.error("Server is currently down || Please try again later");
         } else {
           toast.error(err.response.data.message);
         }
@@ -104,7 +104,7 @@ function SignUp() {
         <ButtonWarning
           label={"Already have an account"}
           buttonText={"Sign in"}
-          to={"/signin"}
+          to={"/auth/signin"}
         />
       </form>
     </div>

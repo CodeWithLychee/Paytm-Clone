@@ -9,24 +9,24 @@ import SignIn from "./pages/SignIn";
 import DashBoard from "./pages/DashBoard";
 import SendMoney from "./pages/SendMoney";
 import AddAccount from "./pages/AddAccount";
-import UpdateDetails from "./pages/UpdateDetails";
 import Transactions from "./pages/Transactions";
 import Settings from "./pages/Settings";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserIcon from "./components/UserIcon";
+import YourProfile from "./pages/YourProfile";
 
 function MainContent() {
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
-  const showSideBar = !["/", "/signup", "/signin"].includes(location.pathname);
+  const showSideBar = !["/", "/auth/signup", "/auth/signin"].includes(
+    location.pathname
+  );
 
   const toggleOpen = useCallback(() => {
-    console.log("toggle called");
-
     setOpen((prevOpen) => !prevOpen);
   }, []);
 
@@ -74,7 +74,7 @@ function MainContent() {
           </svg>
         ),
         text: "Home",
-        to: "/dashboard",
+        to: "/user/dashboard",
       },
       {
         svg: (
@@ -94,7 +94,7 @@ function MainContent() {
           </svg>
         ),
         text: "Add Account",
-        to: "/addAccount",
+        to: "/user/account/addAccount",
       },
       {
         svg: (
@@ -114,7 +114,7 @@ function MainContent() {
           </svg>
         ),
         text: "Transfer",
-        to: "/transferMoney",
+        to: "/user/account/transferMoney",
       },
       {
         svg: (
@@ -134,7 +134,7 @@ function MainContent() {
           </svg>
         ),
         text: "Transactions",
-        to: "/transactions",
+        to: "/user/account/transactions",
       },
     ];
   }, []);
@@ -156,10 +156,10 @@ function MainContent() {
       )}
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/auth/signin" element={<SignIn />} />
         <Route
-          path="/dashboard"
+          path="/user/dashboard"
           element={
             <DashBoard
               open={open}
@@ -170,7 +170,7 @@ function MainContent() {
           }
         />
         <Route
-          path="/addAccount"
+          path="/user/account/addAccount"
           element={
             <AddAccount
               open={open}
@@ -180,9 +180,8 @@ function MainContent() {
             />
           }
         />
-        <Route path="/updateDetails" element={<UpdateDetails />} />
         <Route
-          path="/transferMoney"
+          path="/user/account/transferMoney"
           element={
             <SendMoney
               open={open}
@@ -192,9 +191,20 @@ function MainContent() {
             />
           }
         />
-        <Route path="/transactions" element={<Transactions />} />
         <Route
-          path="/settings"
+          path="/user/account/transactions"
+          element={
+            <Transactions
+              open={open}
+              toggleOpen={toggleOpen}
+              isOpen={isOpen}
+              toggleDropdown={toggleDropdown}
+            />
+          }
+        />
+        <Route path="/user/profile" element={<YourProfile />} />
+        <Route
+          path="/user/settings"
           element={
             <Settings
               open={open}

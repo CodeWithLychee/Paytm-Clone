@@ -17,14 +17,14 @@ function Landing() {
         .then((response) => {
           toast.success(response.data.message);
           clearInterval(ref);
-          navigate("/dashboard");
+          navigate("/user/dashboard");
         })
         .catch((err) => {
           if (err.response.status == "500") {
             toast.error("Server is currently down || Wait for few seconds");
           } else {
             clearInterval(ref);
-            navigate("/signin");
+            navigate("/auth/signin");
           }
         });
     }, 10000);

@@ -30,7 +30,12 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
       })
       .then((response) => {})
       .catch((err) => {
-        navigate("/signin");
+        if (err.message == "Request failed with status code 500") {
+          toast.error("Server is currently down || Please try again later");
+        } else {
+          toast.error("Something went wrong, Please login again");
+        }
+        navigate("/auth/signin");
       });
   }, [navigate]);
 
@@ -70,12 +75,12 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
           await speakText(
             `An amount of ₹ ${amount} has been DEBITED to your account on ${getOnlyDate[1]} ${getOnlyDate[2]} ${getOnlyDate[3]}. Total available balance is ₹ ${balanceLeft}`
           );
-          navigate("/dashboard");
+          navigate("/user/dashboard");
         })
         .catch((err) => {
           if (err.response.status === 500) {
-            toast.error("Server is currently down");
-            navigate("/");
+            toast.error("Server is currently down || Please try again later");
+            navigate("/auth/signin");
           } else {
             toast.error(err.response.data.message);
           }

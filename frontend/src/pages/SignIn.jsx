@@ -38,11 +38,11 @@ function SignIn() {
         )
         .then((response) => {
           toast.success(response.data.message);
-          navigate("/dashboard");
+          navigate("/user/dashboard");
         })
         .catch((err) => {
           if (err.message == "Request failed with status code 500") {
-            toast.error("Server is currently down");
+            toast.error("Server is currently down || Please try again later");
           } else {
             toast.error(err.response.data.message);
           }
@@ -77,7 +77,7 @@ function SignIn() {
         <ButtonWarning
           label={"Don't have an account"}
           buttonText={"Sign up"}
-          to={"/signup"}
+          to={"/auth/signup"}
         />
       </form>
     </div>

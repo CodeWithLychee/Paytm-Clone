@@ -40,7 +40,9 @@ const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
                   if (open && window.innerWidth < 1024) {
                     toggleOpen;
                   } else {
-                    navigate("/delete");
+                    navigate("/user/account/delete", {
+                      state: { accountNumber: accountNumber },
+                    });
                   }
                 }}
               >

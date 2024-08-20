@@ -13,7 +13,12 @@ const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
       })
       .then((response) => {})
       .catch((err) => {
-        navigate("/signin");
+        if (err.message == "Request failed with status code 500") {
+          toast.error("Server is currently down || Please try again later");
+        } else {
+          toast.error("Something went wrong, Please login again");
+        }
+        navigate("/auth/signin");
       });
   }, [navigate]);
 

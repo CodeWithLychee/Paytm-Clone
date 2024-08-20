@@ -1,6 +1,8 @@
 import React from "react";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 function DropDown() {
+  const navigate = useNavigate();
   const buttons = [
     {
       svg: (
@@ -20,7 +22,7 @@ function DropDown() {
         </svg>
       ),
       text: "Your Profile",
-      to: "",
+      to: "/user/profile",
     },
     {
       svg: (
@@ -45,7 +47,7 @@ function DropDown() {
         </svg>
       ),
       text: "Settings",
-      to: "/settings",
+      to: "/user/settings",
     },
     {
       svg: (
@@ -76,6 +78,24 @@ function DropDown() {
           <li
             key={index}
             className="p-2 text-black font-medium hover:bg-gray-100 cursor-pointer flex gap-2"
+            onClick={() => {
+              if (button.text === "Sign out") {
+                axios
+                  .post("/v1/user/logout", {}, { withCredentials: true })
+                  .then((response) => {
+                    toast.success(response.data.message);
+                    navigate("/auth/signin");
+                  })
+                  .catch((err) => {
+                    if (err.message == "Request failed with status code 500") {
+                      toast.error("Server is currently down");
+                    }
+                    navigate("/auth/signin");
+                  });
+              } else {
+                navigate(button.to);
+              }
+            }}
           >
             <div className="flex justify-center items-center">{button.svg}</div>
             {button.text}

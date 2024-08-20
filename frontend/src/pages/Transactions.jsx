@@ -2,43 +2,35 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-function Transactions() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [payments, setPayments] = useState([]);
-  console.log(payments);
-  const [filter, setFilter] = useState("");
+import Loading from "../components/Loading";
 
-  useEffect(() => {
-    axios
-      .get("/v1/user/checkLogin", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setIsLoggedIn(true);
-      })
-      .catch((err) => {
-        navigate("/signin");
-      });
-  }, [navigate]);
+const Transactions = React.memo(
+  ({ open, isOpen, toggleOpen, toggleDropdown }) => {
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [payments, setPayments] = useState([]);
+    console.log(payments);
+    const [filter, setFilter] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("/v1/account/paymentSend", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setPayments(response.data.transaction);
-        setFilter("paid");
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-        navigate("/signin");
-      });
-  }, []);
+    useEffect(() => {
+      axios
+        .get("/v1/user/checkLogin", {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setIsLoggedIn(true);
+        })
+        .catch((err) => {
+          if (err.message == "Request failed with status code 500") {
+            toast.error("Server is currently down || Please try again later");
+          } else {
+            toast.error("Something went wrong, Please login again");
+          }
+          navigate("/auth/signin");
+        });
+    }, [navigate]);
 
-  const paymentSend = () => {
-    if (filter != "paid") {
+    useEffect(() => {
       axios
         .get("/v1/account/paymentSend", {
           withCredentials: true,
@@ -48,66 +40,106 @@ function Transactions() {
           setFilter("paid");
         })
         .catch((err) => {
-          toast.error(err.response.data.message);
-          navigate("/signin");
+          if (err.message == "Request failed with status code 500") {
+            toast.error("Server is currently down || Please try again later");
+          } else {
+            toast.error("Something went wrong, Please login again");
+          }
+          navigate("/auth/signin");
         });
-    }
-  };
-  const paymentRecived = () => {
-    if (filter != "received") {
-      axios
-        .get("/v1/account/paymentRecived", {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setPayments(response.data.transaction);
-          setFilter("received");
-        })
-        .catch((err) => {
-          toast.error(err.response.data.message);
-          navigate("/signin");
-        });
-    }
-  };
+    }, []);
 
-  return (
-    <div className="min-h-screen w-full">
-      <div className="min-h-screen w-full ">
-        <h1 className="text-center text-2xl font-semibold pt-11 mb-6 ml-12 md:ml-20 lg:w-full lg:mx-0">
-          Payment History
-        </h1>
-        <div className="pt-4 w-[70%] ml-[21%] lg:w-full lg:ml-0">
-          <p className="text-black text-center font-medium text-lg ">
-            Please select the payment type :{" "}
-          </p>
-          <div className="flex justify-center gap-5 pt-4 items-center">
-            <button
-              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
-              onClick={paymentSend}
-            >
-              Paid
-            </button>
-            <button
-              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
-              onClick={paymentRecived}
-            >
-              Received
-            </button>
+    const paymentSend = () => {
+      if (filter != "paid") {
+        axios
+          .get("/v1/account/paymentSend", {
+            withCredentials: true,
+          })
+          .then((response) => {
+            setPayments(response.data.transaction);
+            setFilter("paid");
+          })
+          .catch((err) => {
+            if (err.message == "Request failed with status code 500") {
+              toast.error("Server is currently down || Please try again later");
+            } else {
+              toast.error("Something went wrong, Please login again");
+            }
+            navigate("/auth/signin");
+          });
+      }
+    };
+    const paymentRecived = () => {
+      if (filter != "received") {
+        axios
+          .get("/v1/account/paymentRecived", {
+            withCredentials: true,
+          })
+          .then((response) => {
+            setPayments(response.data.transaction);
+            setFilter("received");
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+            if (err.message == "Request failed with status code 500") {
+              toast.error("Server is currently down || Please try again later");
+            } else {
+              toast.error("Something went wrong, Please login again");
+            }
+            navigate("/auth/signin");
+          });
+      }
+    };
+
+    return (
+      <div
+        className="min-h-screen w-full"
+        onClick={() => {
+          if (open && window.innerWidth < 1024) {
+            toggleOpen();
+          }
+          if (isOpen && window.innerWidth < 1024) {
+            toggleDropdown();
+          }
+        }}
+      >
+        <div className="min-h-screen w-full ">
+          <h1 className="text-center text-2xl font-semibold pt-11 mb-6 ml-12 md:ml-20 lg:w-full lg:mx-0">
+            Payment History
+          </h1>
+          <div className="pt-4 w-[70%] ml-[21%] lg:w-full lg:ml-0">
+            <p className="text-black text-center font-medium text-lg ">
+              Please select the payment type :{" "}
+            </p>
+            <div className="flex justify-center gap-5 pt-4 items-center">
+              <button
+                className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
+                onClick={paymentSend}
+              >
+                Paid
+              </button>
+              <button
+                className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
+                onClick={paymentRecived}
+              >
+                Received
+              </button>
+            </div>
           </div>
+          {payments.length ? (
+            <div className="text-center mt-5">
+              <PaymentCard payments={payments} filter={filter} />
+            </div>
+          ) : (
+            <Loading />
+          )}
         </div>
-        {payments.length ? (
-          <div className="text-center mt-5">
-            <PaymentCard payments={payments} filter={filter} />
-          </div>
-        ) : (
-          "No records found matching the applied filters"
-        )}
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
 
-function PaymentCard({ payments, filter }) {
+const PaymentCard = React.memo(({ payments, filter }) => {
   return (
     <>
       {payments.reverse().map((payment, index) => {
@@ -243,6 +275,6 @@ function PaymentCard({ payments, filter }) {
       })}
     </>
   );
-}
+});
 
 export default Transactions;
