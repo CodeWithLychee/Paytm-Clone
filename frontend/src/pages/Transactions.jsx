@@ -73,22 +73,22 @@ function Transactions() {
   return (
     <div className="min-h-screen w-full">
       <div className="min-h-screen w-full ">
-        <h1 className="text-center text-2xl font-semibold pt-11 mb-6">
+        <h1 className="text-center text-2xl font-semibold pt-11 mb-6 ml-12 md:ml-20 lg:w-full lg:mx-0">
           Payment History
         </h1>
-        <div className="pt-4 w-[70%] ml-[21%]">
+        <div className="pt-4 w-[70%] ml-[21%] lg:w-full lg:ml-0">
           <p className="text-black text-center font-medium text-lg ">
             Please select the payment type :{" "}
           </p>
           <div className="flex justify-center gap-5 pt-4 items-center">
             <button
-              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400"
+              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
               onClick={paymentSend}
             >
               Paid
             </button>
             <button
-              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400"
+              className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
               onClick={paymentRecived}
             >
               Received
@@ -110,7 +110,7 @@ function Transactions() {
 function PaymentCard({ payments, filter }) {
   return (
     <>
-      {payments.map((payment, index) => {
+      {payments.reverse().map((payment, index) => {
         const createdAt = new Date(payment.createdAt);
         const formattedCreatedAt = createdAt.toLocaleDateString();
         const formattedCreatedTime = createdAt.toLocaleTimeString();
@@ -121,9 +121,9 @@ function PaymentCard({ payments, filter }) {
             className={`border-[2.3px] rounded-lg pt-2
             p-4 mb-4 w-[70%] ml-[22%] shadow-lg ${
               payment.success ? "border-green-500" : "border-red-500"
-            }`}
+            }  md:w-[50%] md:ml-[30%]  lg:w-[40%] lg:mx-auto`}
           >
-            <div className="flex justify-between">
+            <div className="flex justify-between md:justify-evenly">
               <div className="flex flex-col items-center">
                 <p className="text-lg p-1 border border-black rounded-lg bg-blue-400">
                   Sender
@@ -162,8 +162,7 @@ function PaymentCard({ payments, filter }) {
                   <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
                 </svg>
               </div>
-              <div className="flex items-center"></div>
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center ">
                 <p
                   className={`text-lg p-1 border border-black rounded-lg ${
                     payment.success ? "bg-green-400" : "bg-red-500"
