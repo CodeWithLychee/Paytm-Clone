@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import Lottie from "lottie-react";
 import Loading from "../components/Loading";
 import Heading from "../components/AuthenticationForm/Heading";
 import SubHeading from "../components/AuthenticationForm/SubHeading";
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { speakText } from "../Voice";
 
 function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
+  const [animationData, setAnimationData] = useState(null);
   const [moneySent, setMoneySent] = useState(false);
   const date = new Date();
   const todayDate = date.toDateString();
@@ -38,6 +39,19 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
         navigate("/auth/signin");
       });
   }, [navigate]);
+
+  useEffect(() => {
+    axios
+      .get(
+        "https://lottie.host/67454034-d296-4411-bfde-cec8b364839c/JCjju8dlFy.json"
+      )
+      .then((response) => {
+        setAnimationData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error loading Lottie animation:", error);
+      });
+  }, []);
 
   const changeSenderAccountNumberInput = useCallback((e) => {
     setSenderAccountNumber(e.target.value);
@@ -113,7 +127,13 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
           }}
         >
           {moneySent ? (
-            <Loading />
+            <div className="flex justify-center items-center w-[50%] ml-[30%] min-h-screen md:w-[40%] lg:w-[30%]  lg:mx-auto">
+              <Lottie
+                animationData={animationData}
+                loop={true}
+                autoplay={true}
+              />
+            </div>
           ) : (
             <div className="flex min-h-screen items-center justify-center w-[70%] ml-[23%] md:w-full md:mx-0">
               <form
