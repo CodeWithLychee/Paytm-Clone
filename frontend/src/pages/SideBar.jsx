@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
 const SideBar = React.memo(({ open, toggleOpen, sideBarElements }) => {
   return (
     <div
