@@ -7,7 +7,6 @@ const ToastContainerCondition = () => {
 
   return (
     <ToastContainer
-      className={"fs-5 mt-4"}
       position={toastPositon}
       autoClose={5000}
       hideProgressBar={false}
