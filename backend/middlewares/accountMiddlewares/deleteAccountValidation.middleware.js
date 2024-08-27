@@ -9,14 +9,15 @@ const zodSchema = zod.object({
       message: "Account Number must contain only digits",
     }),
 
-  pin: zod
-    .string()
-    .min(4, { message: "Pin must contain atleast 4 characters" })
-    .max(6, { message: "Pin must contain atmost 6 characters" }),
+  // pin: zod
+  //   .string()
+  //   .min(4, { message: "Pin must contain atleast 4 characters" })
+  //   .max(6, { message: "Pin must contain atmost 6 characters" }),
 });
 
 const deleteAccountValidation = (req, res, next) => {
   const response = zodSchema.safeParse(req.body);
+  console.log(req.body);
 
   if (!response.success) {
     return res.status(411).json({

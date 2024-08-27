@@ -77,61 +77,57 @@ route.post(
 );
 
 //delte account
-route.delete(
-  "/deleteAccount",
-  authMiddleware,
-  deleteAccountValidation,
-  async (req, res) => {
-    try {
-      const { userId, accountNumberToBeDelete, pin } = req.body;
+route.delete("/deleteAccount", authMiddleware, async (req, res) => {
+  try {
+    const { userId, accountNumber, pin } = req.body;
+    console.log(req);
 
-      const userAccount = await Account.findOne({
-        accountNumber: accountNumberToBeDelete,
-      });
+    const userAccount = await Account.findOne({
+      accountNumber,
+    });
 
-      if (!userAccount) {
-        return res.status(400).json({
-          message: "Account does not exists",
-        });
-      }
-
-      const isPinCorrect = userAccount.isPinCorrect(pin);
-
-      if (!isPinCorrect) {
-        return res.status(401).json({
-          message: "Invalid account credentials",
-        });
-      }
-
-      const deletedAccount = await Account.findOneAndDelete({
-        userId,
-        accountNumber: accountNumberToBeDelete,
-      }).select("-pin -balance");
-
-      const updatedUser = await User.findOneAndUpdate(
-        {
-          _id: userId,
-        },
-        {
-          $pull: {
-            accounts: deletedAccount._id,
-          },
-        },
-        { new: true }
-      ).select("-password -phoneNumber");
-
-      return res.status(200).json({
-        message: "Account deleted succesfully",
-        deletedAccount,
-        updatedUser,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        message: "Something went wrong while deleting the account ",
+    if (!userAccount) {
+      return res.status(400).json({
+        message: "Account does not exists",
       });
     }
+
+    // const isPinCorrect = userAccount.isPinCorrect(pin);
+
+    // if (!isPinCorrect) {
+    //   return res.status(401).json({
+    //     message: "Invalid account credentials",
+    //   });
+    // }
+
+    const deletedAccount = await Account.findOneAndDelete({
+      userId,
+      accountNumber: accountNumberToBeDelete,
+    }).select("-pin -balance");
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $pull: {
+          accounts: deletedAccount._id,
+        },
+      },
+      { new: true }
+    ).select("-password -phoneNumber");
+
+    return res.status(200).json({
+      message: "Account deleted succesfully",
+      deletedAccount,
+      updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something went wrong while deleting the account ",
+    });
   }
-);
+});
 
 //find account details
 route.get("/accountDetails", authMiddleware, async (req, res) => {

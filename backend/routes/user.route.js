@@ -208,6 +208,7 @@ route.get("/bulk", authMiddleware, async (req, res) => {
         userId: user._id,
         username: user.username,
         fullName: user.fullName,
+        accounts: user.accounts,
       })),
     });
   } catch (error) {

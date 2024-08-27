@@ -1,8 +1,48 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
-  const navigate = useNavigate();
+  const alertForDelete = ({ accountNumber }) => {
+    console.log("bye");
+    console.log(accountNumber);
+    console.log(typeof accountNumber);
+
+    confirmAlert({
+      title: "Confirm to delete account",
+      message: "Are you sure to do this.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            console.log(accountNumber);
+
+            axios
+              .delete(
+                "/v1/account/deleteAccount",
+                {
+                  accountNumber,
+                },
+                {
+                  withcredentials: true,
+                }
+              )
+              .then((res) => {
+                console.log("deleted");
+              })
+              .catch((err) => {
+                console.log("err");
+              });
+          },
+        },
+        {
+          label: "No",
+        },
+      ],
+    });
+  };
+
   return (
     <>
       {userAccount.map(({ accountNumber, balance }, index) => {
@@ -40,9 +80,7 @@ const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
                   if (open && window.innerWidth < 1024) {
                     toggleOpen;
                   } else {
-                    navigate("/user/account/delete", {
-                      state: { accountNumber: accountNumber },
-                    });
+                    alertForDelete({ accountNumber: accountNumber });
                   }
                 }}
               >
