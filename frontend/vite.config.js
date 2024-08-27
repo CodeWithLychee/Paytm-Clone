@@ -6,9 +6,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/v1": {
-        target: "https://paytm-clone-qf5b.onrender.com/api",
+        target: "https://paytm-clone-qf5b.onrender.com/api/",
         changeOrigin: true,
       },
     },
   },
 });
+
