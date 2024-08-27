@@ -16,7 +16,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserIcon from "./components/UserIcon";
 import YourProfile from "./pages/YourProfile";
-import ToastContainerCondition from "./components/ToastCOntainer";
+import ToastContainerCondition from "./components/ToastContainerCondition";
 
 function MainContent() {
   const [open, setOpen] = useState(false);
