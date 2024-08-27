@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserIcon from "./components/UserIcon";
 import YourProfile from "./pages/YourProfile";
+import ToastContainerCondition from "./components/ToastCOntainer";
 
 function MainContent() {
   const [open, setOpen] = useState(false);
@@ -141,7 +142,7 @@ function MainContent() {
 
   return (
     <div>
-      <ToastContainer />
+      <ToastContainerCondition />
       {showSideBar && (
         <div className="fixed z-10 left-0 h-full">
           <SideBar

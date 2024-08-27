@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/v1": {
-        target: "http://localhost:3000/api",
+        target: "https://paytm-clone-qf5b.onrender.com/api",
         changeOrigin: true,
       },
     },
