@@ -5,8 +5,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/v1": {
-        target: "https://paytm-clone-qf5b.onrender.com/api/",
+      "/api": {
+        target: "https://paytm-clone-qf5b.onrender.com/",
         changeOrigin: true,
       },
     },

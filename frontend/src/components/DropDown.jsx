@@ -81,7 +81,7 @@ function DropDown() {
             onClick={() => {
               if (button.text === "Sign out") {
                 axios
-                  .post("/v1/user/logout", {}, { withCredentials: true })
+                  .post("/api/v1/user/logout", {}, { withCredentials: true })
                   .then((response) => {
                     toast.success(response.data.message);
                     navigate("/auth/signin");

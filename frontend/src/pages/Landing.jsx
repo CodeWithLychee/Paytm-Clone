@@ -11,7 +11,7 @@ function Landing() {
   useEffect(() => {
     let ref = setInterval(() => {
       axios
-        .get("/v1/user/checkLogin", {
+        .get("/api/v1/user/checkLogin", {
           withCredentials: true,
         })
         .then((response) => {

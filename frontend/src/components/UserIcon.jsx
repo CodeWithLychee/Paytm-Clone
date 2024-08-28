@@ -8,7 +8,7 @@ const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
 
   useEffect(() => {
     axios
-      .get("/v1/user/checkLogin", {
+      .get("/api/v1/user/checkLogin", {
         withCredentials: true,
       })
       .then((response) => {})

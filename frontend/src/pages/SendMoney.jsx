@@ -26,7 +26,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
 
   useEffect(() => {
     axios
-      .get("/v1/user/checkLogin", {
+      .get("/api/v1/user/checkLogin", {
         withCredentials: true,
       })
       .then((response) => {})
@@ -71,7 +71,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
       e.preventDefault();
       axios
         .post(
-          "/v1/account/transferMoney",
+          "/api/v1/account/transferMoney",
           {
             fromAccountNumber: senderAccountNUmber,
             toAccountNumber: reciverAccountNUmber,

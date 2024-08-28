@@ -14,7 +14,7 @@ const Transactions = React.memo(
 
     useEffect(() => {
       axios
-        .get("/v1/user/checkLogin", {
+        .get("/api/v1/user/checkLogin", {
           withCredentials: true,
         })
         .then((response) => {
@@ -32,7 +32,7 @@ const Transactions = React.memo(
 
     useEffect(() => {
       axios
-        .get("/v1/account/paymentSend", {
+        .get("/api/v1/account/paymentSend", {
           withCredentials: true,
         })
         .then((response) => {
@@ -52,7 +52,7 @@ const Transactions = React.memo(
     const paymentSend = () => {
       if (filter != "paid") {
         axios
-          .get("/v1/account/paymentSend", {
+          .get("/api/v1/account/paymentSend", {
             withCredentials: true,
           })
           .then((response) => {
@@ -72,7 +72,7 @@ const Transactions = React.memo(
     const paymentRecived = () => {
       if (filter != "received") {
         axios
-          .get("/v1/account/paymentRecived", {
+          .get("/api/v1/account/paymentRecived", {
             withCredentials: true,
           })
           .then((response) => {

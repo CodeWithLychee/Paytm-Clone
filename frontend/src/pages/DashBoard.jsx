@@ -16,7 +16,7 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
 
   useEffect(() => {
     axios
-      .get("/v1/user/checkLogin", {
+      .get("/api/v1/user/checkLogin", {
         withCredentials: true,
       })
       .then((response) => {
@@ -35,7 +35,7 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
   useEffect(() => {
     if (isLoggedIn) {
       axios
-        .get("/v1/user/name", {
+        .get("/api/v1/user/name", {
           withCredentials: true,
         })
         .then((response) => {
@@ -55,7 +55,7 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
   useEffect(() => {
     if (isLoggedIn) {
       axios
-        .get("/v1/account/Accountdetails", {
+        .get("/api/v1/account/Accountdetails", {
           withCredentials: true,
         })
         .then((response) => {

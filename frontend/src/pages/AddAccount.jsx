@@ -16,7 +16,7 @@ function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
 
   useEffect(() => {
     axios
-      .get("/v1/user/checkLogin", {
+      .get("/api/v1/user/checkLogin", {
         withCredentials: true,
       })
       .then((response) => {})
@@ -49,7 +49,7 @@ function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
       e.preventDefault();
       axios
         .post(
-          "/v1/account/addAccount",
+          "/api/v1/account/addAccount",
           {
             accountNumber,
             pin,

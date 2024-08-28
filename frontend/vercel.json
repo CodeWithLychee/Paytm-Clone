@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/v1",
-      "destination": "https://paytm-clone-qf5b.onrender.com/api/"
+      "source": "/api",
+      "destination": "https://paytm-clone-qf5b.onrender.com/"
     },
     { "source": "/(.*)", "destination": "/" }
   ]

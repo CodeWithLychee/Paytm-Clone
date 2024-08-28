@@ -20,7 +20,7 @@ const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
 
             axios
               .delete(
-                "/v1/account/deleteAccount",
+                "/api/v1/account/deleteAccount",
                 {
                   accountNumber,
                 },
