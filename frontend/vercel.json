@@ -1,9 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api",
-      "destination": "https://paytm-clone-qf5b.onrender.com/"
+      "source": "/api/(.*)",
+      "destination": "https://paytm-clone-qf5b.onrender.com/api/$1"
     },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
   ]
 }
