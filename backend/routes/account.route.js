@@ -81,9 +81,9 @@ route.delete("/deleteAccount", authMiddleware, async (req, res) => {
   try {
     const { userId, accountNumber, pin } = req.body;
     console.log(req);
-
+    const parsedAccountNumber = ParseInt(accountNumber);
     const userAccount = await Account.findOne({
-      accountNumber,
+      accountNumber: parsedAccountNumber,
     });
 
     if (!userAccount) {
@@ -102,7 +102,7 @@ route.delete("/deleteAccount", authMiddleware, async (req, res) => {
 
     const deletedAccount = await Account.findOneAndDelete({
       userId,
-      accountNumber: accountNumberToBeDelete,
+      accountNumber: parsedAccountNumber,
     }).select("-pin -balance");
 
     const updatedUser = await User.findOneAndUpdate(

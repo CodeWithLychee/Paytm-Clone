@@ -17,7 +17,6 @@ const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
           label: "Yes",
           onClick: () => {
             console.log(accountNumber);
-
             axios
               .delete(
                 "/api/v1/account/deleteAccount",
