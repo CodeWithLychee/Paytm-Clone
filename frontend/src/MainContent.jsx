@@ -203,7 +203,17 @@ function MainContent() {
             />
           }
         />
-        <Route path="/user/profile" element={<YourProfile />} />
+        <Route
+          path="/user/profile"
+          element={
+            <YourProfile
+              open={open}
+              toggleOpen={toggleOpen}
+              isOpen={isOpen}
+              toggleDropdown={toggleDropdown}
+            />
+          }
+        />
         <Route
           path="/user/settings"
           element={
