@@ -55,7 +55,6 @@ function MainContent() {
           </svg>
         ),
         text: "Main menu",
-        to: "",
       },
       {
         svg: (

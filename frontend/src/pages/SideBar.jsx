@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { CiSearch } from "react-icons/ci";
 const SideBar = React.memo(({ open, toggleOpen, sideBarElements }) => {
   return (
     <div
@@ -28,6 +28,7 @@ const SideBar = React.memo(({ open, toggleOpen, sideBarElements }) => {
             d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
           />
         </svg>
+        {/* <CiSearch className="text-4xl" /> */}
       </div>
 
       <div className="">
