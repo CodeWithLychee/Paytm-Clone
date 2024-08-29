@@ -124,6 +124,7 @@ route.delete("/deleteAccount", authMiddleware, async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      error,
       message: "Something went wrong while deleting the account ",
     });
   }
