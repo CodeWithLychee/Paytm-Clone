@@ -8,6 +8,17 @@ export const initVoice = () => {
       voice.name.includes("Google UK English Female") ||
       voice.name.includes("Google US English Female")
   );
+
+  if (!selectedVoice) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      const updatedVoices = window.speechSynthesis.getVoices();
+      selectedVoice = updatedVoices.find(
+        (voice) =>
+          voice.name.includes("Google UK English Female") ||
+          voice.name.includes("Google US English Female")
+      );
+    };
+  }
 };
 
 export const speakText = (text, rate = 0.8) => {

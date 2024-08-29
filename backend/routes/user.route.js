@@ -89,6 +89,15 @@ route.get("/name", authMiddleware, async (req, res) => {
   });
 });
 
+route.get("/details", authMiddleware, async (req, res) => {
+  const details = await User.findOne({ email: req.body.email }).select(
+    "-_id -password"
+  );
+  return res.status(200).json({
+    details,
+  });
+});
+
 route.post("/signin", signInValidation, async (req, res) => {
   try {
     const { email, password } = req.body;
