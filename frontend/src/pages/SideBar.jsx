@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CiSearch } from "react-icons/ci";
+import { FaArrowRight } from "react-icons/fa6";
+
 const SideBar = React.memo(({ open, toggleOpen, sideBarElements }) => {
   return (
     <div
@@ -9,26 +10,12 @@ const SideBar = React.memo(({ open, toggleOpen, sideBarElements }) => {
       } duration-300 relative`}
     >
       <div
-        className={`max-w-max absolute -right-3 top-11 bg-white rounded-full cursor-pointer ${
-          !open && "rotate-180"
-        }`}
+        className={`max-w-max absolute -right-3 top-12 bg-white rounded-full border-2  border-blue-100 cursor-pointer p-1 ${
+          open && "rotate-180"
+        } duration-200`}
         onClick={toggleOpen}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-8 "
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-          />
-        </svg>
-        {/* <CiSearch className="text-4xl" /> */}
+        <FaArrowRight />
       </div>
 
       <div className="">

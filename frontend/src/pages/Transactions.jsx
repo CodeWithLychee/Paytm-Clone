@@ -9,8 +9,8 @@ const Transactions = React.memo(
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [payments, setPayments] = useState([]);
-    console.log(payments);
     const [filter, setFilter] = useState("");
+    const [loading, setLoading] = useState(true); // Add loading state
 
     useEffect(() => {
       axios
@@ -21,7 +21,7 @@ const Transactions = React.memo(
           setIsLoggedIn(true);
         })
         .catch((err) => {
-          if (err.message == "Request failed with status code 500") {
+          if (err.message === "Request failed with status code 500") {
             toast.error("Server is currently down || Please try again later");
           } else {
             toast.error("Something went wrong, Please login again");
@@ -38,19 +38,22 @@ const Transactions = React.memo(
         .then((response) => {
           setPayments(response.data.transaction);
           setFilter("paid");
+          setLoading(false); // Stop loading after data is fetched
         })
         .catch((err) => {
-          if (err.message == "Request failed with status code 500") {
+          if (err.message === "Request failed with status code 500") {
             toast.error("Server is currently down || Please try again later");
           } else {
             toast.error("Something went wrong, Please login again");
           }
           navigate("/auth/signin");
+          setLoading(false); // Stop loading if there's an error
         });
     }, []);
 
     const paymentSend = () => {
-      if (filter != "paid") {
+      if (filter !== "paid") {
+        setLoading(true); // Start loading before fetching data
         axios
           .get("/api/v1/account/paymentSend", {
             withCredentials: true,
@@ -58,19 +61,23 @@ const Transactions = React.memo(
           .then((response) => {
             setPayments(response.data.transaction);
             setFilter("paid");
+            setLoading(false); // Stop loading after data is fetched
           })
           .catch((err) => {
-            if (err.message == "Request failed with status code 500") {
+            if (err.message === "Request failed with status code 500") {
               toast.error("Server is currently down || Please try again later");
             } else {
               toast.error("Something went wrong, Please login again");
             }
             navigate("/auth/signin");
+            setLoading(false); // Stop loading if there's an error
           });
       }
     };
+
     const paymentRecived = () => {
-      if (filter != "received") {
+      if (filter !== "received") {
+        setLoading(true); // Start loading before fetching data
         axios
           .get("/api/v1/account/paymentRecived", {
             withCredentials: true,
@@ -78,22 +85,25 @@ const Transactions = React.memo(
           .then((response) => {
             setPayments(response.data.transaction);
             setFilter("received");
+            setLoading(false); // Stop loading after data is fetched
           })
           .catch((err) => {
-            toast.error(err.response.data.message);
-            if (err.message == "Request failed with status code 500") {
+            if (err.message === "Request failed with status code 500") {
               toast.error("Server is currently down || Please try again later");
             } else {
               toast.error("Something went wrong, Please login again");
             }
             navigate("/auth/signin");
+            setLoading(false); // Stop loading if there's an error
           });
       }
     };
 
     return (
       <div
-        className="min-h-screen w-full"
+        className={`min-h-screen w-full ${isOpen ? "opacity-45" : ""} ${
+          open ? "opacity-45" : ""
+        } lg:opacity-100`}
         onClick={() => {
           if (open && window.innerWidth < 1024) {
             toggleOpen();
@@ -126,12 +136,16 @@ const Transactions = React.memo(
               </button>
             </div>
           </div>
-          {payments.length ? (
+          {loading ? (
+            <Loading />
+          ) : payments.length ? (
             <div className="text-center mt-5">
               <PaymentCard payments={payments} filter={filter} />
             </div>
           ) : (
-            <Loading />
+            <p className="text-center text-gray-700 mt-5 ml-14 md:ml-28 lg:ml-0">
+              No previous transaction history found
+            </p>
           )}
         </div>
       </div>
@@ -161,7 +175,7 @@ const PaymentCard = React.memo(({ payments, filter }) => {
                   Sender
                 </p>
                 <div className="flex pt-3">
-                  <svg
+                  {/* <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -174,7 +188,7 @@ const PaymentCard = React.memo(({ payments, filter }) => {
                       strokeLinejoin="round"
                       d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                     />
-                  </svg>
+                  </svg> */}
                   <p className="font-semibold text-gray-800">
                     {payment.senderName}
                   </p>

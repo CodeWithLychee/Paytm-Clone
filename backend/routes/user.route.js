@@ -7,77 +7,94 @@ import { updateValidation } from "../middlewares/userMiddlewares/userDetailsUpda
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 import { generateToken } from "../utils/generateToken.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const route = express.Router();
 
-route.post("/signup", signUpValidation, async (req, res) => {
-  try {
-    const { username, fullName, email, password, phoneNumber } = req.body;
+route.post(
+  "/signup",
+  upload.single("image"),
+  signUpValidation,
+  async (req, res) => {
+    try {
+      const { username, fullName, email, password, phoneNumber } = req.body;
 
-    //checking if userName already exists
-    const isUsernameExists = await User.findOne({
-      username,
-    });
+      //checking if userName already exists
+      const isUsernameExists = await User.findOne({
+        username,
+      });
 
-    if (isUsernameExists) {
-      return res.status(409).json({ message: "Username already taken" });
-    }
+      if (isUsernameExists) {
+        return res.status(409).json({ message: "Username already taken" });
+      }
 
-    //checking if email already exists
-    const isEmailExists = await User.findOne({
-      email,
-    });
+      //checking if email already exists
+      const isEmailExists = await User.findOne({
+        email,
+      });
 
-    if (isEmailExists) {
-      return res.status(409).json({ message: "Email already taken" });
-    }
+      if (isEmailExists) {
+        return res.status(409).json({ message: "Email already taken" });
+      }
 
-    //checking if phoneNumber is already exists
-    const isPhoneNumberExists = await User.findOne({
-      phoneNumber,
-    });
+      //checking if phoneNumber is already exists
+      const isPhoneNumberExists = await User.findOne({
+        phoneNumber,
+      });
 
-    if (isPhoneNumberExists) {
-      return res.status(409).json({ message: "PhoneNumber already taken" });
-    }
+      if (isPhoneNumberExists) {
+        return res.status(409).json({ message: "PhoneNumber already taken" });
+      }
 
-    const user = await User.create({
-      username,
-      fullName,
-      email,
-      password, //here the hashed password will be stored before creating the user in the database
-      phoneNumber,
-    });
+      let imageUrl = null;
+      if (req.file) {
+        const uploadResult = await uploadOnCloudinary(req.file.path);
+        if (uploadResult) {
+          imageUrl = uploadResult.url;
+        }
+      }
 
-    const createdUser = await User.findOne(user._id).select(
-      "-password -phoneNumber"
-    );
+      const user = await User.create({
+        username,
+        fullName,
+        email,
+        password,
+        phoneNumber,
+        image: imageUrl,
+      });
 
-    if (!createdUser) {
-      return res.status(500).json({
-        message: "Something went Wrong while registering user to our database",
+      const createdUser = await User.findOne(user._id).select(
+        "-password -phoneNumber"
+      );
+
+      if (!createdUser) {
+        return res.status(500).json({
+          message:
+            "Something went Wrong while registering user to our database",
+        });
+      }
+
+      const token = generateToken(createdUser);
+
+      const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      };
+
+      return res.status(200).cookie("token", token, options).json({
+        message: "User created succesfully",
+        user: createdUser,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.name,
+        message: "Error occur while signup",
       });
     }
-
-    const token = generateToken(createdUser);
-
-    const options = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    };
-
-    return res.status(200).cookie("token", token, options).json({
-      message: "User created succesfully",
-      user: createdUser,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: error.name,
-      message: "Error occur while signup",
-    });
   }
-});
+);
 
 route.get("/name", authMiddleware, async (req, res) => {
   const name = await User.findOne({

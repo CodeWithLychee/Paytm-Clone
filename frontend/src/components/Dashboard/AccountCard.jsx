@@ -2,99 +2,103 @@ import React from "react";
 import axios from "axios";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const AccountCard = React.memo(({ userAccount, open, toggleOpen }) => {
-  const alertForDelete = ({ accountNumber }) => {
-    console.log("bye");
-    console.log(accountNumber);
-    console.log(typeof accountNumber);
+const AccountCard = React.memo(
+  ({ userAccount, open, toggleOpen, fetchAccountDetails }) => {
+    const navigate = useNavigate();
 
-    confirmAlert({
-      title: "Confirm to delete account",
-      message: "Are you sure to do this.",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: () => {
-            console.log(accountNumber);
-            axios
-              .delete(
-                "/api/v1/account/deleteAccount",
-                {
-                  accountNumber,
-                },
-                {
+    const alertForDelete = ({ accountNumber }) => {
+
+      confirmAlert({
+        title: "Confirm to delete account",
+        message: "Are you sure to do this.",
+        buttons: [
+          {
+            label: "Yes",
+            onClick: () => {
+              console.log(accountNumber);
+              axios
+                .delete("/api/v1/account/deleteAccount", {
+                  params: { accountNumber },
                   withcredentials: true,
-                }
-              )
-              .then((res) => {
-                console.log("deleted");
-              })
-              .catch((err) => {
-                console.log("err");
-              });
-          },
-        },
-        {
-          label: "No",
-        },
-      ],
-    });
-  };
-
-  return (
-    <>
-      {userAccount.map(({ accountNumber, balance }, index) => {
-        return (
-          <div
-            key={index}
-            className={`border-2 border-blue-500 rounded-xl pt-6 pb-4 px-3 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto  lg:pl-6 ${
-              !open ? "hover:shadow-xl" : ""
-            } lg:hover:shadow-xl`}
-          >
-            <div className="flex gap-1">
-              <p className="font-medium shrink-0">Account Number :</p>
-              <p className="font-medium">{accountNumber}</p>
-            </div>
-            <div className="flex gap-1">
-              <p className="font-medium">Balance :</p>
-              <p className="font-medium">
-                {`₹ ${" "}`}
-                {balance}
-              </p>
-            </div>
-            <div
-              className={` flex justify-end ${
-                !open ? "cursor-pointer" : ""
-              } lg:cursor-pointer`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5 text-red-500"
-                onClick={() => {
-                  if (open && window.innerWidth < 1024) {
-                    toggleOpen;
+                })
+                .then((res) => {
+                  toast.success("Account Deleted Successfully");
+                  fetchAccountDetails(); 
+                })
+                .catch((err) => {
+                  if (err.message == "Request failed with status code 500") {
+                    toast.error("Server is currently down");
                   } else {
-                    alertForDelete({ accountNumber: accountNumber });
+                    toast.error("Something went wrong, Please try again later");
                   }
-                }}
+                  navigate("/auth/signin");
+                });
+            },
+          },
+          {
+            label: "No",
+          },
+        ],
+      });
+    };
+
+    return (
+      <>
+        {userAccount.map(({ accountNumber, balance }, index) => {
+          return (
+            <div
+              key={index}
+              className={`border-2 border-blue-500 rounded-xl pt-6 pb-4 px-3 mb-6 shadow-lg md:w-[70%] md:mx-auto lg:w-[40%] mx-auto  lg:pl-6 ${
+                !open ? "hover:shadow-xl" : ""
+              } lg:hover:shadow-xl`}
+            >
+              <div className="flex gap-1">
+                <p className="font-medium shrink-0">Account Number :</p>
+                <p className="font-medium">{accountNumber}</p>
+              </div>
+              <div className="flex gap-1">
+                <p className="font-medium">Balance :</p>
+                <p className="font-medium">
+                  {`₹ ${" "}`}
+                  {balance}
+                </p>
+              </div>
+              <div
+                className={` flex justify-end ${
+                  !open ? "cursor-pointer" : ""
+                } lg:cursor-pointer`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                />
-              </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-5 text-red-500"
+                  onClick={() => {
+                    if (open && window.innerWidth < 1024) {
+                      toggleOpen;
+                    } else {
+                      alertForDelete({ accountNumber: accountNumber });
+                    }
+                  }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                  />
+                </svg>
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </>
-  );
-});
+          );
+        })}
+      </>
+    );
+  }
+);
 
 export default AccountCard;

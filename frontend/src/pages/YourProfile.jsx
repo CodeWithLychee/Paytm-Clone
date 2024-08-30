@@ -35,7 +35,7 @@ function YourProfile({ open, toggleOpen, isOpen, toggleDropdown }) {
       }}
     >
       {details ? (
-        <div className="w-[70%] min-h-screen ml-[23%] absolute mt-[23%] md:w-[50%] md:mt-[17%] md:ml-[25%] lg:mt-[10%] lg:w-[40%] lg:ml-[30%]">
+        <div className="w-[70%] min-h-max ml-[23%] absolute mt-[23%] md:w-[50%] md:mt-[17%] md:ml-[25%] lg:mt-[10%] lg:w-[40%] lg:ml-[30%]">
           <BoxDetails title={"Username"} data={details.username} />
           <BoxDetails title={"Full Name"} data={details.fullName} />
           <BoxDetails title={"Email"} data={details.email} />

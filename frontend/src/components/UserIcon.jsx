@@ -5,6 +5,7 @@ import DropDown from "./DropDown";
 
 const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
   const navigate = useNavigate();
+  const [imageLink, setimageLink] = useState("");
 
   useEffect(() => {
     axios
@@ -22,6 +23,18 @@ const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
       });
   }, [navigate]);
 
+  useEffect(() => {
+    axios
+      .get("/api/v1/user/details")
+      .then((response) => {
+        setimageLink(response.data.details.image);
+      })
+      .catch((err) => {
+        toast.error("Something went wrong || Please login again");
+        navigate("/auth/signin");
+      });
+  }, []);
+
   return (
     <div className="absolute z-10 right-[30px] top-11">
       <div
@@ -29,20 +42,10 @@ const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
         onClick={toggleDropdown}
       >
         <div className="cursor-pointer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-8"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-            />
-          </svg>
+          <img
+            src={imageLink}
+            className="rounded-full w-10 h-10 md:w-16 md:h-16"
+          />
         </div>
       </div>
       {isOpen ? <DropDown /> : <div></div>}

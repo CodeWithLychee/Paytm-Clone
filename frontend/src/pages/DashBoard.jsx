@@ -52,23 +52,28 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
     }
   }, [isLoggedIn, navigate]);
 
+  // Function to fetch account details
+  const fetchAccountDetails = () => {
+    axios
+      .get("/api/v1/account/Accountdetails", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setUserAccount(response.data.userAccountdetails);
+      })
+      .catch((err) => {
+        if (err.message == "Request failed with status code 500") {
+          toast.error("Server is currently down");
+        } else {
+          toast.error("Something went wrong, Please login again");
+        }
+        navigate("/auth/signin");
+      });
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
-      axios
-        .get("/api/v1/account/Accountdetails", {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setUserAccount(response.data.userAccountdetails);
-        })
-        .catch((err) => {
-          if (err.message == "Request failed with status code 500") {
-            toast.error("Server is currently down");
-          } else {
-            toast.error("Something went wrong, Please login again");
-          }
-          navigate("/auth/signin");
-        });
+      fetchAccountDetails(); // Fetch account details when logged in
     }
   }, [isLoggedIn, navigate]);
 
@@ -114,6 +119,7 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
                 userAccount={userAccount}
                 open={open}
                 setOpen={toggleOpen}
+                fetchAccountDetails={fetchAccountDetails} // Pass the fetch function to AccountCard
               />
             </div>
             <div className="flex gap-4 md:pl-[15%] lg:text-3xl lg:justify-center lg:pl-0">

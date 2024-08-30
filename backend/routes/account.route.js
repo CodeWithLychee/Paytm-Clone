@@ -79,13 +79,14 @@ route.post(
 //delte account
 route.delete("/deleteAccount", authMiddleware, async (req, res) => {
   try {
-    const { userId, accountNumber, pin } = req.body;
-    console.log(req);
-    const parsedAccountNumber = ParseInt(accountNumber);
-    const userAccount = await Account.findOne({
-      accountNumber: parsedAccountNumber,
-    });
+    console.log(req.body);
+    const { accountNumber } = req.query;
+    const { userId } = req.body;
 
+    const userAccount = await Account.findOne({
+      accountNumber,
+    });
+    console.log(userAccount);
     if (!userAccount) {
       return res.status(400).json({
         message: "Account does not exists",
@@ -102,8 +103,9 @@ route.delete("/deleteAccount", authMiddleware, async (req, res) => {
 
     const deletedAccount = await Account.findOneAndDelete({
       userId,
-      accountNumber: parsedAccountNumber,
+      accountNumber,
     }).select("-pin -balance");
+    console.log(deletedAccount);
 
     const updatedUser = await User.findOneAndUpdate(
       {
@@ -123,6 +125,8 @@ route.delete("/deleteAccount", authMiddleware, async (req, res) => {
       updatedUser,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       error,
       message: "Something went wrong while deleting the account ",
