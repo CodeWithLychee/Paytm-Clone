@@ -41,12 +41,10 @@ const UserIcon = React.memo(({ isOpen, toggleDropdown }) => {
         className=" min-w-min flex justify-end items-center"
         onClick={toggleDropdown}
       >
-        <div className="cursor-pointer">
-          <img
-            src={imageLink}
-            className="rounded-full w-10 h-10 md:w-16 md:h-16"
-          />
-        </div>
+        <img
+          src={imageLink}
+          className="cursor-pointer rounded-full w-10 h-10 md:w-16 md:h-16"
+        />
       </div>
       {isOpen ? <DropDown /> : <div></div>}
     </div>

@@ -12,13 +12,10 @@ import AddAccount from "./pages/AddAccount";
 import Transactions from "./pages/Transactions";
 import Settings from "./pages/Settings";
 
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserIcon from "./components/UserIcon";
 import YourProfile from "./pages/YourProfile";
-import ToastContainerCondition from "./components/ToastContainerCondition";
-
-import { CiSearch } from "react-icons/ci";
+import SearchPersons from "./pages/SearchPersons";
 
 function MainContent() {
   const [open, setOpen] = useState(false);
@@ -156,7 +153,7 @@ function MainContent() {
           </svg>
         ),
         text: "Search Persons",
-        to: "/user/account/transactions",
+        to: "/user/searchPersons",
       },
     ];
   }, []);
@@ -217,6 +214,17 @@ function MainContent() {
           path="/user/account/transactions"
           element={
             <Transactions
+              open={open}
+              toggleOpen={toggleOpen}
+              isOpen={isOpen}
+              toggleDropdown={toggleDropdown}
+            />
+          }
+        />
+        <Route
+          path="/user/searchPersons"
+          element={
+            <SearchPersons
               open={open}
               toggleOpen={toggleOpen}
               isOpen={isOpen}

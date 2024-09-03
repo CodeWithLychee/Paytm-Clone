@@ -78,7 +78,7 @@ function AddAccount({ open, toggleOpen, isOpen, toggleDropdown }) {
     <div className="min-h-screen w-full ">
       <div
         className={`${
-          open ? "opacity-45" : ""
+          open || isOpen ? "opacity-50" : ""
         } min-h-screen w-full lg:opacity-100`}
         onClick={() => {
           if (open && window.innerWidth < 1024) {

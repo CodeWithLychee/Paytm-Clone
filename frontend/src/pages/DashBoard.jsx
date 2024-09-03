@@ -90,7 +90,7 @@ function DashBoard({ open, toggleOpen, isOpen, toggleDropdown }) {
       {name ? (
         <div
           className={`${
-            open ? "opacity-45" : ""
+            open || isOpen ? "opacity-50" : ""
           } min-h-screen w-full lg:opacity-100`}
           onClick={() => {
             if (open && window.innerWidth < 1024) {

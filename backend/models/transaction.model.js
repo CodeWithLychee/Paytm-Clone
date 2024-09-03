@@ -14,6 +14,9 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Sender's Account Number is required"],
     },
+    senderImage: {
+      type: String,
+    },
     receiverName: {
       type: String,
       required: [true, "Receiver's Name is required"],
@@ -25,6 +28,9 @@ const transactionSchema = new mongoose.Schema(
     receiverAccountNumber: {
       type: String,
       required: [true, "Receiver's Account Number is required"],
+    },
+    receiverImage: {
+      type: String,
     },
     amount: {
       type: Number,

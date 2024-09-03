@@ -228,12 +228,17 @@ route.post(
         _id: userId,
       });
 
-      const reciverId = await User.findOne({ _id: receiver.userId });
+      const reciverId = await User.findOne({
+        _id: receiver.userId,
+      });
 
       req.body.senderId = senderId._id;
       req.body.senderName = senderId.fullName;
+      req.body.senderImage = senderId.image;
+
       req.body.receiverId = reciverId._id;
       req.body.receiverName = reciverId.fullName;
+      req.body.receiverImage = reciverId.image;
 
       try {
         await Account.findOneAndUpdate(
@@ -269,9 +274,11 @@ route.post(
           senderId: senderId._id,
           senderName: senderId.fullName,
           senderAccountNumber: fromAccountNumber,
+          senderImage: senderId.image,
           receiverId: reciverId._id,
           receiverName: reciverId.fullName,
           receiverAccountNumber: toAccountNumber,
+          receiverImage: reciverId.image,
           amount,
           success: isTransactionCompleted,
         });
@@ -288,8 +295,6 @@ route.post(
           balanceLeft: senderAccountNumberbalance,
         });
       } catch (error) {
-        console.log("error");
-
         if (!isCommitedTransaction) {
           await session.abortTransaction();
           await session.endSession();
@@ -302,9 +307,11 @@ route.post(
           senderId: req.body.senderId,
           senderName: req.body.senderName,
           senderAccountNumber: req.body.fromAccountNumber,
+          senderImage: req.body.senderImage,
           receiverName: req.body.receiverName,
           reciverId: req.body.reciverId,
           receiverAccountNumber: req.body.toAccountNumber,
+          receiverImage: req.body.receiverImage,
           amount: req.body.amount,
           success: isTransactionCompleted,
         });
@@ -322,24 +329,6 @@ route.post(
   }
 );
 
-route.get("/allPayments", authMiddleware, async (req, res) => {
-  try {
-    const { userId } = req.body;
-
-    const transaction = await Transaction.find({
-      $or: [{ senderId: userId }, { receiverId: userId }],
-    });
-
-    return res.status(200).json({
-      message: "Transaction details fetched succesfully",
-      transaction,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Something went wrong while fetching transaction details",
-    });
-  }
-});
 route.get("/paymentSend", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.body;

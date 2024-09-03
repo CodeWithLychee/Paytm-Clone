@@ -9,6 +9,7 @@ import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { generateToken } from "../utils/generateToken.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { Account } from "../models/account.model.js";
 
 const route = express.Router();
 
@@ -219,22 +220,44 @@ route.put("/update", authMiddleware, updateValidation, async (req, res) => {
   }
 });
 
-route.get("/bulk", authMiddleware, async (req, res) => {
+route.get("/bulk", async (req, res) => {
   try {
     const filter = req.query.filter || "";
 
     const users = await User.find({
       fullName: {
         $regex: filter,
+        $options: "i",
       },
     });
 
+    console.log("user hiii", users);
+
+    await Promise.all(
+      users.map(async (user) => {
+        let accountNumberArray = [];
+        await Promise.all(
+          user.accounts.map(async (accountId) => {
+            const account = await Account.findOne({
+              _id: accountId,
+            }).select("accountNumber -_id");
+
+            if (account) {
+              accountNumberArray.push(account.accountNumber);
+            }
+          })
+        );
+        user.accountsNumber = accountNumberArray;
+      })
+    );
+
+    console.log("users", users);
     res.status(200).json({
       message: users.map((user) => ({
         userId: user._id,
         username: user.username,
         fullName: user.fullName,
-        accounts: user.accounts,
+        accountNumbers: user.accountsNumber,
       })),
     });
   } catch (error) {

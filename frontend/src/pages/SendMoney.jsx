@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Lottie from "lottie-react";
 import Loading from "../components/Loading";
@@ -19,8 +19,12 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
   const getOnlyDate = todayDate.split(" ");
 
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [senderAccountNUmber, setSenderAccountNumber] = useState("");
-  const [reciverAccountNUmber, setReciverAccountNumber] = useState("");
+  const [reciverAccountNUmber, setReciverAccountNumber] = useState(
+    location.state?.receiverAccountNumber || ""
+  );
   const [pin, setPin] = useState("");
   const [amount, setAmount] = useState();
 
@@ -115,7 +119,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
       <div className="min-h-screen w-full flex">
         <div
           className={`${
-            open ? "opacity-45" : ""
+            open || isOpen ? "opacity-50" : ""
           } min-h-screen w-full lg:opacity-100`}
           onClick={() => {
             if (open && window.innerWidth < 1024) {
@@ -149,24 +153,28 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
                   heading={"Sender's Account Number"}
                   type={"text"}
                   placeholder={"Enter your account number"}
+                  value={senderAccountNUmber}
                   onChange={changeSenderAccountNumberInput}
                 />
                 <InputBox
                   heading={"Reciver's Account Number"}
                   type={"text"}
                   placeholder={"Enter Reciver's account number"}
+                  value={reciverAccountNUmber}
                   onChange={changeReciverAccountNumberInput}
                 />
                 <InputBox
                   heading={"Pin"}
                   type={"text"}
                   placeholder={"Enter your account pin"}
+                  value={pin}
                   onChange={changePinInput}
                 />
                 <InputBox
                   heading={"Amount"}
                   type={"Number"}
                   placeholder={"Enter the amount"}
+                  value={amount}
                   onChange={changeAmountInput}
                 />
                 <Button

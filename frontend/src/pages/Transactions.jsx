@@ -101,8 +101,8 @@ const Transactions = React.memo(
 
     return (
       <div
-        className={`min-h-screen w-full ${isOpen ? "opacity-45" : ""} ${
-          open ? "opacity-45" : ""
+        className={`min-h-screen w-full ${
+          open || isOpen ? "opacity-50" : ""
         } lg:opacity-100`}
         onClick={() => {
           if (open && window.innerWidth < 1024) {
@@ -124,13 +124,30 @@ const Transactions = React.memo(
             <div className="flex justify-center gap-5 pt-4 items-center">
               <button
                 className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
-                onClick={paymentSend}
+                onClick={() => {
+                  if (open && window.innerWidth < 1024) {
+                    toggleOpen;
+                  }
+                  if (isOpen && window.innerWidth < 1024) {
+                    toggleDropdown;
+                  }
+                  paymentSend();
+                }}
               >
                 Paid
               </button>
               <button
                 className="border-2 border-black w-[27%] rounded-lg p-1 hover:bg-blue-400 lg:w-[10%]"
-                onClick={paymentRecived}
+                onClick={() => {
+                  if (open && window.innerWidth < 1024) {
+                    toggleOpen;
+                  }
+                  if (isOpen && window.innerWidth < 1024) {
+                    toggleDropdown;
+                  } else {
+                    paymentRecived();
+                  }
+                }}
               >
                 Received
               </button>
@@ -167,29 +184,21 @@ const PaymentCard = React.memo(({ payments, filter }) => {
             className={`border-[2.3px] rounded-lg pt-2
             p-4 mb-4 w-[70%] ml-[22%] shadow-lg ${
               payment.success ? "border-green-500" : "border-red-500"
-            }  md:w-[50%] md:ml-[30%]  lg:w-[40%] lg:mx-auto`}
+            }  md:w-[50%] md:ml-[30%]  lg:w-[40%] lg:mx-auto `}
           >
             <div className="flex justify-between md:justify-evenly">
               <div className="flex flex-col items-center">
                 <p className="text-lg p-1 border border-black rounded-lg bg-blue-400">
                   Sender
                 </p>
-                <div className="flex pt-3">
-                  {/* <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                <div className="flex pt-3 gap-1">
+                  <div className="flex justify-center items-center">
+                    <img
+                      src={payment.senderImage}
+                      className=" w-9 h-6 rounded-full md:w-7 md:h-7 lg:w-8 lg:h-8"
                     />
-                  </svg> */}
-                  <p className="font-semibold text-gray-800">
+                  </div>
+                  <p className="font-semibold text-gray-800 flex justify-center items-center">
                     {payment.senderName}
                   </p>
                 </div>
@@ -216,22 +225,14 @@ const PaymentCard = React.memo(({ payments, filter }) => {
                 >
                   Receiver
                 </p>
-                <div className="flex pt-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                <div className="flex pt-3 gap-1">
+                  <div className="flex justify-center items-center">
+                    <img
+                      src={payment.receiverImage}
+                      className="w-9 h-6 rounded-full md:w-7 md:h-7 lg:w-8 lg:h-8"
                     />
-                  </svg>
-                  <p className="font-semibold text-gray-800">
+                  </div>
+                  <p className="font-semibold text-gray-800 flex justify-center items-center">
                     {payment.receiverName}
                   </p>
                 </div>

@@ -6,11 +6,17 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const AccountCard = React.memo(
-  ({ userAccount, open, toggleOpen, fetchAccountDetails }) => {
+  ({
+    userAccount,
+    open,
+    toggleOpen,
+    fetchAccountDetails,
+    isOpen,
+    toggleDropdown,
+  }) => {
     const navigate = useNavigate();
 
     const alertForDelete = ({ accountNumber }) => {
-
       confirmAlert({
         title: "Confirm to delete account",
         message: "Are you sure to do this.",
@@ -26,7 +32,7 @@ const AccountCard = React.memo(
                 })
                 .then((res) => {
                   toast.success("Account Deleted Successfully");
-                  fetchAccountDetails(); 
+                  fetchAccountDetails();
                 })
                 .catch((err) => {
                   if (err.message == "Request failed with status code 500") {
@@ -81,6 +87,9 @@ const AccountCard = React.memo(
                   onClick={() => {
                     if (open && window.innerWidth < 1024) {
                       toggleOpen;
+                    }
+                    if (isOpen && window.innerWidth < 1024) {
+                      toggleDropdown;
                     } else {
                       alertForDelete({ accountNumber: accountNumber });
                     }
