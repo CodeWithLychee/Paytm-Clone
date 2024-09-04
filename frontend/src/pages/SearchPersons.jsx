@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import InputBox from "../components/AuthenticationForm/InputBox";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -6,27 +6,34 @@ import Loading from "../components/Loading";
 
 function SearchPersons({ open, toggleOpen, isOpen, toggleDropdown }) {
   const [userData, setUserData] = useState([]);
-  const [loading, setLoading] = useState(false); // Added loading state
+  const [loading, setLoading] = useState(false);
+  const timeoutRef = useRef(null);
 
   const searchPerson = useCallback(async (name) => {
-    if (!name) {
-      setUserData([]);
-      return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
 
-    setLoading(true); // Start loading
-    axios
-      .get(`/api/v1/user/bulk?filter=${name}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setUserData(res.data.message);
-        setLoading(false); // End loading after success
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false); // End loading after error
-      });
+    timeoutRef.current = setTimeout(() => {
+      if (!name) {
+        setUserData([]);
+        return;
+      }
+
+      setLoading(true);
+      axios
+        .get(`/api/v1/user/bulk?filter=${name}`, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          setUserData(res.data.message);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }, 500);
   }, []);
 
   return (
@@ -46,7 +53,7 @@ function SearchPersons({ open, toggleOpen, isOpen, toggleDropdown }) {
       <h1 className="w-full text-center mt-20 ml-2 text-2xl font-bold text-blue-500">
         Search Persons
       </h1>
-      <div className="ml-6 w-[70%] flex justify-center items-center">
+      <div className="ml-6 w-[70%] flex justify-center items-center md:w-[50%] lg:w-[30%]">
         <div className="flex-1">
           <InputBox
             heading={""}
@@ -71,7 +78,7 @@ const UserAccounts = React.memo(({ userData, loading }) => {
   };
 
   return (
-    <div className="w-3/4 ml-14">
+    <div className="w-3/4 ml-14 md:w-[60%] md:ml-8 lg:w-[40%]">
       <div className="w-full font-semibold text-left">
         <div className="grid grid-cols-1 p-3 border-b border-gray-300">
           <div>Names</div>
@@ -86,7 +93,7 @@ const UserAccounts = React.memo(({ userData, loading }) => {
               className="flex justify-between items-center p-3 cursor-pointer"
               onClick={() => toggleDropdown(user.userId)}
             >
-              <span>{user.fullName}</span>
+              <span className="text-base font-semibold ">{user.fullName}</span>
               <span
                 className={`text-xl transform duration-500 ${
                   expandedIndex === user.userId
@@ -111,7 +118,7 @@ const UserAccounts = React.memo(({ userData, loading }) => {
                         <span>{account}</span>
                       </div>
                       <p
-                        className="hover:text-blue-500 duration-300 cursor-pointer text-xs text-end"
+                        className="hover:text-blue-500 duration-300 cursor-pointer text-sm text-end"
                         onClick={() => {
                           navigate("/user/account/transferMoney", {
                             state: { receiverAccountNumber: account },
@@ -130,7 +137,7 @@ const UserAccounts = React.memo(({ userData, loading }) => {
           </div>
         ))
       ) : (
-        <p className="text-center">No users found</p>
+        <p className="text-center mt-5">No users found</p>
       )}
     </div>
   );
