@@ -65,6 +65,8 @@ function SignUp() {
       formData.append("image", image);
     }
 
+    console.log(username, fullName, email, password, phoneNumber, image);
+
     try {
       const response = await axios.post("/api/v1/user/signup", formData, {
         headers: {
