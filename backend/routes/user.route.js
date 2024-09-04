@@ -89,6 +89,8 @@ route.post(
         user: createdUser,
       });
     } catch (error) {
+      console.log("HIIII\n", error);
+
       res.status(500).json({
         error: error.name,
         message: "Error occur while signup",
@@ -266,6 +268,9 @@ route.get("/bulk", async (req, res) => {
 });
 
 route.use((err, req, res, next) => {
+  console.log("Inside global catches function");
+  console.log("pooi ", err);
+
   return res.status(500).json({
     message: "Something went Wrong || Internal Server error",
   });
