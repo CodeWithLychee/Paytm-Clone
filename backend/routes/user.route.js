@@ -82,6 +82,7 @@ route.post(
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       };
 
       return res.status(200).cookie("token", token, options).json({
@@ -156,6 +157,7 @@ route.post("/signin", signInValidation, async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     };
 
     return res.status(200).cookie("token", token, options).json({
@@ -175,6 +177,7 @@ route.post("/logout", authMiddleware, (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    maxAge: 0, // 7 days
   };
   return res.status(200).clearCookie("token", options).json({
     message: "User logout Succesfully",
@@ -208,6 +211,7 @@ route.put("/update", authMiddleware, updateValidation, async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     };
 
     return res.status(200).cookie("token", updatedToken, options).json({

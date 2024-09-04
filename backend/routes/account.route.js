@@ -60,6 +60,7 @@ route.post(
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       };
 
       return res.status(200).cookie("token", token, options).json({
