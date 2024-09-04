@@ -7,13 +7,13 @@ import Heading from "../components/AuthenticationForm/Heading";
 import SubHeading from "../components/AuthenticationForm/SubHeading";
 import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
-
 import { toast } from "react-toastify";
-import { speakText } from "../Voice";
+import { speakTextWithCallback } from "../voice";
 
 function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
   const [animationData, setAnimationData] = useState(null);
   const [moneySent, setMoneySent] = useState(false);
+  const [speechCompleted, setSpeechCompleted] = useState(false);
   const date = new Date();
   const todayDate = date.toDateString();
   const getOnlyDate = todayDate.split(" ");
@@ -22,7 +22,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
   const location = useLocation();
 
   const [senderAccountNUmber, setSenderAccountNumber] = useState("");
-  const [reciverAccountNUmber, setReciverAccountNumber] = useState(
+  const [reciverAccountNUmber, setReciverAccountNUmber] = useState(
     location.state?.receiverAccountNumber || ""
   );
   const [pin, setPin] = useState("");
@@ -35,7 +35,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
       })
       .then((response) => {})
       .catch((err) => {
-        if (err.message == "Request failed with status code 500") {
+        if (err.message === "Request failed with status code 500") {
           toast.error("Server is currently down || Please try again later");
         } else {
           toast.error("Something went wrong, Please login again");
@@ -61,7 +61,7 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
     setSenderAccountNumber(e.target.value);
   }, []);
   const changeReciverAccountNumberInput = useCallback((e) => {
-    setReciverAccountNumber(e.target.value);
+    setReciverAccountNUmber(e.target.value);
   }, []);
   const changePinInput = useCallback((e) => {
     setPin(e.target.value);
@@ -90,10 +90,12 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
           setMoneySent(true);
           toast.success(response.data.message);
           let balanceLeft = response.data.balanceLeft.balance;
-          await speakText(
-            `An amount of ₹ ${amount} has been DEBITED to your account on ${getOnlyDate[1]} ${getOnlyDate[2]} ${getOnlyDate[3]}. Total available balance is ₹ ${balanceLeft}`
-          );
-          navigate("/user/dashboard");
+
+          const speechText = `An amount of ₹ ${amount} has been DEBITED to your account on ${getOnlyDate[1]} ${getOnlyDate[2]} ${getOnlyDate[3]}. Total available balance is ₹ ${balanceLeft}`;
+
+          speakTextWithCallback(speechText, 0.8, () => {
+            setSpeechCompleted(true);
+          });
         })
         .catch((err) => {
           if (err.response.status === 500) {
@@ -113,6 +115,12 @@ function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
       navigate,
     ]
   );
+
+  useEffect(() => {
+    if (speechCompleted) {
+      navigate("/user/dashboard");
+    }
+  }, [speechCompleted, navigate]);
 
   return (
     <div>
