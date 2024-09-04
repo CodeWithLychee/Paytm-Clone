@@ -35,6 +35,7 @@ function SignUp() {
     (e) => setPhoneNumber(e.target.value),
     []
   );
+
   const changeImageInput = useCallback((e) => {
     const file = e.target.files[0];
 
@@ -54,35 +55,33 @@ function SignUp() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .post(
-        "/api/v1/user/signup",
-        {
-          username,
-          fullName,
-          email,
-          password,
-          phoneNumber,
-          image,
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("fullName", fullName);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("phoneNumber", phoneNumber);
+    if (image) {
+      formData.append("image", image);
+    }
+
+    try {
+      const response = await axios.post("/api/v1/user/signup", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          withCredentials: true,
-        },
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      )
-      .then((response) => {
-        toast.success(response.data.message);
-        navigate("/user/dashboard");
-      })
-      .catch((err) => {
-        if (err.response?.status === 500) {
-          toast.error("Server is currently down. Please try again later.");
-        } else {
-          toast.error(err.response?.data?.message || "An error occurred.");
-        }
+        withCredentials: true,
       });
+
+      toast.success(response.data.message);
+      navigate("/user/dashboard");
+    } catch (err) {
+      if (err.response?.status === 500) {
+        toast.error("Server is currently down. Please try again later.");
+      } else {
+        toast.error(err.response?.data?.message || "An error occurred.");
+      }
+    }
   };
 
   return (

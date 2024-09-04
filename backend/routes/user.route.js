@@ -231,8 +231,6 @@ route.get("/bulk", async (req, res) => {
       },
     });
 
-    console.log("user hiii", users);
-
     await Promise.all(
       users.map(async (user) => {
         let accountNumberArray = [];
@@ -251,7 +249,6 @@ route.get("/bulk", async (req, res) => {
       })
     );
 
-    console.log("users", users);
     res.status(200).json({
       message: users.map((user) => ({
         userId: user._id,
