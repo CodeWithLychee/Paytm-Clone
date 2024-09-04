@@ -8,7 +8,7 @@ import SubHeading from "../components/AuthenticationForm/SubHeading";
 import InputBox from "../components/AuthenticationForm/InputBox";
 import Button from "../components/AuthenticationForm/Button";
 import { toast } from "react-toastify";
-import { speakTextWithCallback } from "../voice";
+import { speakTextWithCallback } from "../Voice.js";
 
 function SendMoney({ open, toggleOpen, isOpen, toggleDropdown }) {
   const [animationData, setAnimationData] = useState(null);
