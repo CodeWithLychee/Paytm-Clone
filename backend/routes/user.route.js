@@ -7,7 +7,7 @@ import { updateValidation } from "../middlewares/userMiddlewares/userDetailsUpda
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 import { generateToken } from "../utils/generateToken.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { Account } from "../models/account.model.js";
 
@@ -50,7 +50,7 @@ route.post(
 
       let imageUrl = null;
       if (req.file) {
-        const uploadResult = await uploadOnCloudinary(req.file.path);
+        const uploadResult = await uploadToCloudinary(req.file);
         if (uploadResult) {
           imageUrl = uploadResult.url;
         }
