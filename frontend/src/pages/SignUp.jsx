@@ -41,7 +41,7 @@ function SignUp() {
 
     if (file) {
       const fileType = file.type;
-      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+      const validImageTypes = "image/*";
 
       if (!validImageTypes.includes(fileType)) {
         toast.error("Only image files (jpeg, png, gif) are allowed.");
