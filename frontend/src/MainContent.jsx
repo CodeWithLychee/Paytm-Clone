@@ -16,15 +16,25 @@ import "react-toastify/dist/ReactToastify.css";
 import UserIcon from "./components/UserIcon";
 import YourProfile from "./pages/YourProfile";
 import SearchPersons from "./pages/SearchPersons";
+import NotFound from "./pages/NotFound";
 
 function MainContent() {
   const [open, setOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
-  const showSideBar = !["/", "/auth/signup", "/auth/signin"].includes(
-    location.pathname
-  );
+
+  const routesWithSidebar = [
+    "/user/dashboard",
+    "/user/account/addAccount",
+    "/user/account/transferMoney",
+    "/user/account/transactions",
+    "/user/searchPersons",
+    "/user/profile",
+    "/user/settings",
+  ];
+
+  const showSideBar = routesWithSidebar.includes(location.pathname);
 
   const toggleOpen = useCallback(() => {
     setOpen((prevOpen) => !prevOpen);
@@ -254,6 +264,7 @@ function MainContent() {
             />
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
